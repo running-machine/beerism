@@ -32,4 +32,5 @@ dependencies {
     implementation 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:2.0.24'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.github.clans:fab:1.6.4'
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 }
