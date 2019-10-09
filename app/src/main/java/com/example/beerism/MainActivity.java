@@ -1,24 +1,51 @@
 package com.example.beerism;
 
+
+import android.os.Bundle;
+import android.view.WindowManager;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import android.os.Bundle;
+import com.ToxicBakery.viewpager.transforms.CubeOutTransformer;
+import com.example.beerism.Fragment.Cu_Fragment;
+import com.example.beerism.Fragment.GS_Fragment;
+import com.example.beerism.Fragment.SevenEleven_Fragment;
+import com.gigamole.navigationtabstrip.NavigationTabStrip;
+import com.github.clans.fab.FloatingActionButton;
+
 
 public class MainActivity extends AppCompatActivity {
-    FragmentPagerAdapter adapterViewPager;
+    NavigationTabStrip main_nts;
+    ViewPager main_vp;
+    FloatingActionButton fab_detetion, fab_search, fab_rec;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
-        ViewPager vpPager = (ViewPager) findViewById(R.id.vpPager);
-        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
-        vpPager.setAdapter(adapterViewPager);
+        fab_detetion = findViewById(R.id.menu_item_detect);
+        fab_rec = findViewById(R.id.menu_item_recommand);
+        fab_search = findViewById(R.id.menu_item_search);
+
+
+        main_nts = findViewById(R.id.nts_top);
+        main_nts.setTabIndex(0, true);
+        main_nts.setStripFactor(2);
+
+        main_vp = findViewById(R.id.main_vp);
+        main_vp.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
+        main_vp.setPageTransformer(true, new CubeOutTransformer());
+        main_nts.setViewPager(main_vp);
+
+
+
     }
 
     public static class MyPagerAdapter extends FragmentPagerAdapter {
@@ -27,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         public MyPagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
         }
+
 
         // Returns total number of pages
         @Override
@@ -38,15 +66,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
             switch (position) {
-                case 0:
-
-                    return Cu_Fragment.newInstance(0, "Page # 1");
                 case 1:
-                    return SevenEleven_Fragment.newInstance(1, "Page # 2");
+                    return GS_Fragment.instantiate();
                 case 2:
-                    return GS_Fragment.newInstance(2, "Page # 3");
+                    return SevenEleven_Fragment.instantiate();
                 default:
-                    return null;
+                    return Cu_Fragment.instantiate();
             }
         }
 
@@ -57,4 +82,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
 }
