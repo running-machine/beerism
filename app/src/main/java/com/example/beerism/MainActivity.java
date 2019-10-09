@@ -12,12 +12,13 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.ToxicBakery.viewpager.transforms.CubeOutTransformer;
 import com.gigamole.navigationtabstrip.NavigationTabStrip;
-
+import com.github.clans.fab.FloatingActionButton;
 
 
 public class MainActivity extends AppCompatActivity {
     NavigationTabStrip main_nts;
     ViewPager main_vp;
+    FloatingActionButton fab_detetion, fab_search, fab_rec;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,12 @@ public class MainActivity extends AppCompatActivity {
         main_vp.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
         main_vp.setPageTransformer(true, new CubeOutTransformer());
         main_nts.setViewPager(main_vp);
+
+        fab_detetion = findViewById(R.id.menu_item_detect);
+        fab_rec = findViewById(R.id.menu_item_recommand);
+        fab_search = findViewById(R.id.menu_item_search);
+
+
 
     }
 
