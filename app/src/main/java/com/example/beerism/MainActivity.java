@@ -23,11 +23,15 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+
         main_nts = findViewById(R.id.nts_top);
         main_nts.setTabIndex(0, true);
+
         main_vp = findViewById(R.id.main_vp);
         main_vp.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
         main_vp.setPageTransformer(true, new RotateUpTransformer());
+        main_nts.setViewPager(main_vp);
+
     }
 
     public static class MyPagerAdapter extends FragmentPagerAdapter {
@@ -49,9 +53,9 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return Cu_Fragment.newInstance(0, "Page # 1");
+                    return Cu_Fragment.instantiate();
                 case 1:
-                    return SevenEleven_Fragment.newInstance(1, "Page # 2");
+                    return SevenEleven_Fragment.instantiate();
                 case 2:
                     return GS_Fragment.instantiate();
                 default:
