@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -9,12 +10,13 @@
     <com.gigamole.navigationtabstrip.NavigationTabStrip
         android:id="@+id/nts_top"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
+
         app:nts_active_color="@color/colorPrimary"
-        app:nts_animation_duration="150"
+        app:nts_animation_duration="200"
         app:nts_color="@color/common_google_signin_btn_text_dark_default"
         app:nts_corners_radius="5dp"
-        app:nts_factor="1"
+        app:nts_factor="2"
         app:nts_gravity="top"
         app:nts_inactive_color="#c4c4c4"
         app:nts_size="16sp"
@@ -22,11 +24,98 @@
         app:nts_type="point"
         app:nts_weight="7dp" />
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/main_vp"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent">
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/main_vp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </androidx.viewpager.widget.ViewPager>
+
+        <com.github.clans.fab.FloatingActionMenu
+            android:id="@+id/menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="false"
+            android:layout_gravity="bottom|right"
+            android:layout_marginLeft="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            fab:menu_animationDelayPerItem="50"
+            fab:menu_backgroundColor="@android:color/transparent"
+            fab:menu_buttonSpacing="0dp"
+            fab:menu_colorNormal="#DA4336"
+            fab:menu_colorPressed="#E75043"
+            fab:menu_colorRipple="#99FFFFFF"
+            fab:menu_fab_hide_animation="@anim/my_hide_animation"
+            fab:menu_fab_label="your_label_here"
+            fab:menu_fab_show_animation="@anim/my_show_animation"
+            fab:menu_fab_size="normal"
+            fab:menu_icon="@drawable/fab_add"
+            fab:menu_labels_colorNormal="#333333"
+            fab:menu_labels_colorPressed="#444444"
+            fab:menu_labels_colorRipple="#66FFFFFF"
+            fab:menu_labels_cornerRadius="3dp"
+            fab:menu_labels_ellipsize="none"
+            fab:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
+            fab:menu_labels_margin="0dp"
+            fab:menu_labels_maxLines="-1"
+            fab:menu_labels_padding="8dp"
+            fab:menu_labels_paddingBottom="4dp"
+            fab:menu_labels_paddingLeft="8dp"
+            fab:menu_labels_paddingRight="8dp"
+            fab:menu_labels_paddingTop="4dp"
+            fab:menu_labels_position="left"
+            fab:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
+            fab:menu_labels_showShadow="true"
+            fab:menu_labels_singleLine="false"
+            fab:menu_labels_style="@style/YourCustomLabelsStyle"
+            fab:menu_labels_textColor="#FFFFFF"
+            fab:menu_labels_textSize="14sp"
+            fab:menu_openDirection="up"
+            fab:menu_shadowColor="#66000000"
+            fab:menu_shadowRadius="4dp"
+            fab:menu_shadowXOffset="1dp"
+            fab:menu_shadowYOffset="3dp"
+            fab:menu_showShadow="true">
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/menu_item_detect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_label="맥주 인식"
+                fab:fab_label="Menu item 1"
+                fab:fab_size="mini"
+                fab:scaleType="fitXY"/>
+
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/menu_item_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_label="맥주 검색"
+                fab:fab_label="Menu item 1"
+                fab:fab_size="mini" />
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/menu_item_recommand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_label="맥주 추천"
+                fab:fab_label="Menu item 1"
+                fab:fab_size="mini" />
+
+        </com.github.clans.fab.FloatingActionMenu>
+
+    </FrameLayout>
+
+
 </LinearLayout>
+
 
 
 

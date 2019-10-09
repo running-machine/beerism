@@ -1,5 +1,6 @@
 package com.example.beerism;
 
+
 import android.os.Bundle;
 import android.view.WindowManager;
 
@@ -9,13 +10,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.ToxicBakery.viewpager.transforms.RotateUpTransformer;
+import com.ToxicBakery.viewpager.transforms.CubeOutTransformer;
 import com.gigamole.navigationtabstrip.NavigationTabStrip;
+
+
 
 public class MainActivity extends AppCompatActivity {
     NavigationTabStrip main_nts;
     ViewPager main_vp;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,10 +28,11 @@ public class MainActivity extends AppCompatActivity {
 
         main_nts = findViewById(R.id.nts_top);
         main_nts.setTabIndex(0, true);
+        main_nts.setStripFactor(2);
 
         main_vp = findViewById(R.id.main_vp);
         main_vp.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
-        main_vp.setPageTransformer(true, new RotateUpTransformer());
+        main_vp.setPageTransformer(true, new CubeOutTransformer());
         main_nts.setViewPager(main_vp);
 
     }
@@ -52,14 +55,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
             switch (position) {
-                case 0:
-                    return Cu_Fragment.instantiate();
                 case 1:
-                    return SevenEleven_Fragment.instantiate();
-                case 2:
                     return GS_Fragment.instantiate();
+                case 2:
+                    return SevenEleven_Fragment.instantiate();
                 default:
-                    return null;
+                    return Cu_Fragment.instantiate();
             }
         }
 
@@ -70,4 +71,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
 }
