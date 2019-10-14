@@ -13,8 +13,7 @@ import com.github.chrisbanes.photoview.PhotoView;
 public class Cu_Fragment extends Fragment {
 
     public static Fragment instantiate() {
-        Cu_Fragment fragment = new Cu_Fragment();
-        return fragment;
+        return new Cu_Fragment();
     }
 
 
@@ -24,7 +23,7 @@ public class Cu_Fragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.cu_page, container, false);
         PhotoView photoView = view.findViewById(R.id.cu_discount);
-        photoView.setImageResource(R.drawable.dum_sale);
+        photoView.setImageResource(R.drawable.dis_cu);
         return view;
     }
 }
