@@ -13,8 +13,7 @@ import com.github.chrisbanes.photoview.PhotoView;
 
 public class GS_Fragment  extends Fragment {
     public static Fragment instantiate() {
-        GS_Fragment fragment = new GS_Fragment();
-        return fragment;
+        return new GS_Fragment();
     }
 
     //    // Store instance variables

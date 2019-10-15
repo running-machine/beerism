@@ -3,7 +3,6 @@ package com.example.beerism;
 
 import android.os.Bundle;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -16,26 +15,26 @@ import com.example.beerism.Fragment.Cu_Fragment;
 import com.example.beerism.Fragment.GS_Fragment;
 import com.example.beerism.Fragment.SevenEleven_Fragment;
 import com.gigamole.navigationtabstrip.NavigationTabStrip;
-import com.github.clans.fab.FloatingActionButton;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class MainActivity extends AppCompatActivity {
     NavigationTabStrip main_nts;
     ViewPager main_vp;
-    FloatingActionButton fab_detetion, fab_search, fab_rec;
+
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
-        Toast.makeText(getApplicationContext(), firebaseFirestore.collection("beer").document("cass").get(),Toast.LENGTH_SHORT).show();
-        fab_detetion = findViewById(R.id.menu_item_detect);
-        fab_rec = findViewById(R.id.menu_item_recommand);
-        fab_search = findViewById(R.id.menu_item_search);
 
+//        fab_detetion = findViewById(R.id.menu_item_detect);
+//        fab_rec = findViewById(R.id.menu_item_recommand);
+//        fab_search = findViewById(R.id.menu_item_search);
 
         main_nts = findViewById(R.id.nts_top);
         main_nts.setTabIndex(0, true);
@@ -45,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
         main_vp.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
         main_vp.setPageTransformer(true, new CubeOutTransformer());
         main_nts.setViewPager(main_vp);
-
 
 
     }
