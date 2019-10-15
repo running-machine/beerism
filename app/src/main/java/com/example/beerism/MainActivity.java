@@ -1,9 +1,10 @@
 package com.example.beerism;
 
 
+import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -16,6 +17,9 @@ import com.example.beerism.Fragment.Cu_Fragment;
 import com.example.beerism.Fragment.GS_Fragment;
 import com.example.beerism.Fragment.SevenEleven_Fragment;
 import com.gigamole.navigationtabstrip.NavigationTabStrip;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.Target;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -25,13 +29,36 @@ public class MainActivity extends AppCompatActivity {
     ViewPager main_vp;
     FloatingActionButton fab_detetion, fab_search, fab_rec;
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
-        Toast.makeText(getApplicationContext(), firebaseFirestore.collection("beer").document("cass").get(),Toast.LENGTH_SHORT).show();
+
+        // 앱 최초 실행 여부 //
+        SharedPreferences pref = getSharedPreferences("isFirst", Activity.MODE_PRIVATE);
+
+        // 타겟 지정
+        Target target = new ViewTarget(R.id.main_vp, this);
+
+        boolean first = pref.getBoolean("isFirst", false);
+
+        if (!first) {
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putBoolean("isFirst", true);
+            editor.apply();
+            new ShowcaseView.Builder(this)
+                    .setTarget(target)
+                    .setContentTitle("ShowcaseView")
+                    .setContentText("This is highlighting the Home button")
+                    .hideOnTouchOutside()
+                    .build();
+        }
+
+
         fab_detetion = findViewById(R.id.menu_item_detect);
         fab_rec = findViewById(R.id.menu_item_recommand);
         fab_search = findViewById(R.id.menu_item_search);
@@ -45,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
         main_vp.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
         main_vp.setPageTransformer(true, new CubeOutTransformer());
         main_nts.setViewPager(main_vp);
-
 
 
     }
