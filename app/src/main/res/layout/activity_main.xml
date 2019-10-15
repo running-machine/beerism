@@ -12,6 +12,7 @@
         android:layout_height="60dp"
 
         android:background="@color/colordark"
+        android:scrollbarDefaultDelayBeforeFade="400"
         app:nts_active_color="@color/ReplyOrange"
         app:nts_animation_duration="200"
         app:nts_color="@color/ReplyOrange"
@@ -21,7 +22,7 @@
         app:nts_inactive_color="#c4c4c4"
         app:nts_size="17sp"
         app:nts_titles="@array/titles"
-        app:nts_type="point"
+        app:nts_type="line"
         app:nts_weight="7dp" />
 
     <FrameLayout
@@ -52,10 +53,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:backgroundTint="@color/colordark"
-            android:clickable="true"
+            android:clickable="false"
+            app:contentInsetStartWithNavigation="72sp"
             app:fabAlignmentMode="center"
             app:hideOnScroll="true"
-            app:navigationIcon="@drawable/uparrow" />
+            app:navigationIcon="@android:drawable/arrow_up_float" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
@@ -63,8 +65,10 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/ReplyOrange"
             android:src="@drawable/saletag"
-            app:layout_anchor="@id/bar"
-            app:maxImageSize="30sp" />
+            app:layout_anchor="@+id/bar"
+            app:maxImageSize="35sp" />
+
+
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
