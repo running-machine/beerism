@@ -31,10 +31,9 @@ dependencies {
     implementation 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:2.0.24'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
-    implementation 'com.google.firebase:firebase-firestore:21.1.1'
-<<<<<<< HEAD
-
-=======
+    implementation 'com.google.firebase:firebase-firestore:21.2.0'
     implementation 'com.github.amlcurran.showcaseview:library:5.4.3'
->>>>>>> 2be9244fed9c83fde6c744e9bf996ec123057257
+    implementation 'com.ogaclejapan.arclayout:library:1.1.0@aar'
+    implementation 'gun0912.ted:tedpermission:2.2.2'
+
 }

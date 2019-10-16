@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
     <com.gigamole.navigationtabstrip.NavigationTabStrip
         android:id="@+id/nts_top"
         android:layout_width="match_parent"
@@ -25,27 +24,21 @@
         app:nts_type="line"
         app:nts_weight="7dp" />
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp">
-
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/main_vp"
-            android:layout_width="wrap_content"
-            android:layout_height="500dp"
-            android:layout_gravity="center|top"
-            android:clipToPadding="false">
-
-        </androidx.viewpager.widget.ViewPager>
-
-    </FrameLayout>
-
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <!-- Other components and views -->
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/main_vp"
+            android:layout_width="wrap_content"
+            android:layout_height="300dp"
+            android:layout_gravity="center|top"
+            android:clipToPadding="false">
+
+        </androidx.viewpager.widget.ViewPager>
 
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bar"
@@ -54,10 +47,12 @@
             android:layout_gravity="bottom"
             android:backgroundTint="@color/colordark"
             android:clickable="false"
+            android:fadeScrollbars="true"
             app:contentInsetStartWithNavigation="72sp"
             app:fabAlignmentMode="center"
             app:hideOnScroll="true"
             app:navigationIcon="@android:drawable/arrow_up_float" />
+        <!-- Overlay that dims the screen -->
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
@@ -68,7 +63,46 @@
             app:layout_anchor="@+id/bar"
             app:maxImageSize="35sp" />
 
+        <com.ogaclejapan.arclayout.ArcLayout
+            android:id="@+id/arc_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="30dp"
+            app:arc_axisRadius="120dp"
+            app:arc_freeAngle="false"
+            app:arc_origin="bottom"
+            app:arc_radius="168dp"
+            app:arc_reverseAngle="false">
 
+            <Button
+                android:layout_width="48dp"
+                android:layout_height="60dp"
+                android:background="@drawable/oval"
+                android:backgroundTint="@color/ReplyOrange"
+                android:gravity="center"
+                android:text="A"
+                android:textColor="#FFFFFF"
+                app:arc_origin="center" />
+
+            <Button
+                android:layout_width="48dp"
+                android:layout_height="60dp"
+                android:backgroundTint="@color/ReplyOrange"
+                android:gravity="center"
+                android:text="B"
+                android:textColor="#FFFFFF"
+                app:arc_origin="center" />
+
+            <Button
+                android:layout_width="48dp"
+                android:layout_height="60dp"
+                android:backgroundTint="@color/ReplyOrange"
+                android:gravity="center"
+                android:text="C"
+                android:textColor="#FFFFFF"
+                app:arc_origin="center" />
+
+        </com.ogaclejapan.arclayout.ArcLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
