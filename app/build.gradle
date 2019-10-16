@@ -35,5 +35,6 @@ dependencies {
     implementation 'com.github.amlcurran.showcaseview:library:5.4.3'
     implementation 'com.ogaclejapan.arclayout:library:1.1.0@aar'
     implementation 'gun0912.ted:tedpermission:2.2.2'
+    implementation 'com.getbase:floatingactionbutton:1.10.1'
 
 }

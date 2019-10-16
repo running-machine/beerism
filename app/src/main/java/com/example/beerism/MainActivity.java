@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,6 +33,7 @@ import com.github.amlcurran.showcaseview.targets.Target;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.ogaclejapan.arclayout.ArcLayout;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,13 +42,16 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity {
     NavigationTabStrip main_nts;
     ViewPager main_vp;
+    View rootLayout;
+    ClipRevealFrame menuLayout;
     private static final int FROM_CAMERA = 0;
     private static final int FROM_ALBUM = 1;
     FloatingActionButton mainFab;
+    ArcLayout arcLayout;
+    View centerItem;
     // 데이터베이스 객체 인스턴스 생성
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-    private Spinner spinner_money_min, spinner_money_max;
-    private ImageView img1, img2, img3, img4;
+    private ImageView img1;
     private Uri imgUri, photoURI, albumURI;
     private String mCurrentPhotoPath;
 
@@ -60,6 +63,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
+
+
+//        rootLayout = findViewById(R.id.coordinatorLayout);
+//        menuLayout = (ClipRevealFrame) findViewById(R.id.menu_layout);
+//        arcLayout = (ArcLayout) findViewById(R.id.arc_layout);
+//        centerItem = findViewById(R.id.center_item);
         // 앱 최초 실행 여부 //
         SharedPreferences pref = getSharedPreferences("isFirst", Activity.MODE_PRIVATE);
 
@@ -80,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                     .build();
         }
 
-        mainFab = findViewById(R.id.fab);
+        mainFab = findViewById(R.id.fab1);
         main_nts = findViewById(R.id.nts_top);
         main_nts.setTabIndex(0, true);
         main_nts.setStripFactor(2);
@@ -101,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void makeDialog() {
 
-        AlertDialog.Builder alt_bld = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder alt_bld = new AlertDialog.Builder(MainActivity.this,R.style.Alert);
 
         alt_bld.setTitle("사진 업로드").setIcon(R.drawable.object_detection).setCancelable(
 
@@ -200,13 +209,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
         } else {
-
             Log.v("알림", "저장공간에 접근 불가능");
-
             return;
-
         }
-
 
     }
 
