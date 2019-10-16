@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (photoFile != null) {
 
-                    Uri providerURI = FileProvider.getUriForFile(this, getPackageName(), photoFile);
+                    Uri providerURI = FileProvider.getUriForFile(this,"com.example.beerism.fileprovider", photoFile);
 
                     imgUri = providerURI;
 
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
 
         File imageFile = null;
 
-        File storageDir = new File(Environment.getExternalStorageDirectory() "/Pictures/"+imgFileName);
+        File storageDir = new File(Environment.getExternalStorageDirectory()+ "/Pictures" ,"file");
 
 
         if (!storageDir.exists()) {
@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
         intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
 
 
-        intent.setType("Picture/*");
+        intent.setType("image/*");
 
 
         startActivityForResult(intent, FROM_ALBUM);
