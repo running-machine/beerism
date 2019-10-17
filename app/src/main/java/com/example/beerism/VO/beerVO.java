@@ -1,27 +1,26 @@
 package com.example.beerism.VO;
 
 public class beerVO {
+    private String beer_image;
+    private String name_ko;
+    private String name_en;
     private String alc;
-    private String ad;
     private String category;
     private String country;
-    private String beer_image;
-
     private String homepage;
-    private String name_en;
-    private String name_ko;
-    public beerVO(String alc, String ad, String category, String country, String homepage, String name_en, String name_ko, String beer_image) {
+    private String ad;
+
+
+    public beerVO(String beer_image, String name_ko, String name_en, String alc, String category, String country, String homepage, String ad) {
+        this.beer_image = beer_image;
+        this.name_ko = name_ko;
+        this.name_en = name_en;
         this.alc = alc;
-        this.ad = ad;
         this.category = category;
         this.country = country;
         this.homepage = homepage;
-        this.name_en = name_en;
-        this.name_ko = name_ko;
-        this.beer_image = beer_image;
+        this.ad = ad;
     }
-
-    public beerVO(String id, String ad, String alc, String category, String country, String homepage, String img, String name_en, String name_ko){};
 
     public String getAd() {
         return ad;

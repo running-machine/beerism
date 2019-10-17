@@ -51,15 +51,16 @@ public class BeerList extends AppCompatActivity {
 
                 for (QueryDocumentSnapshot documentSnapshots : queryDocumentSnapshots) {
                     if (documentSnapshots.get("name_en") != null){
-                        beerVOArrayList.add(0,new beerVO(documentSnapshots.getId(),
-                                documentSnapshots.getString("ad"),
+                        beerVOArrayList.add(0,new beerVO(
+                                documentSnapshots.getString("img"),
+                                documentSnapshots.getString("name_ko"),
+                                documentSnapshots.getString("name_en"),
                                 documentSnapshots.getString("alc"),
                                 documentSnapshots.getString("category"),
                                 documentSnapshots.getString("country"),
                                 documentSnapshots.getString("homepage"),
-                                documentSnapshots.getString("img"),
-                                documentSnapshots.getString("name_en"),
-                                documentSnapshots.getString("name_ko")));
+                                documentSnapshots.getString("ad")
+                                ));
                     }
                 }
                 adapter.notifyDataSetChanged();
