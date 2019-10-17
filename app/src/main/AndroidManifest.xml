@@ -17,6 +17,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".BeerList"></activity>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.beerism.fileprovider"
@@ -29,9 +31,7 @@
                 tools:replace="android:resource" />
         </provider>
 
-        <activity android:name=".MainActivity">
-
-        </activity>
+        <activity android:name=".MainActivity"></activity>
         <activity android:name=".permission_camera">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,7 +39,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

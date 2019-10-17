@@ -9,6 +9,8 @@ public class beerVO {
     private String name_en;
     private String name_ko;
 
+    public beerVO(){};
+
     public String getAd() {
         return ad;
     }
