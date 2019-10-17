@@ -12,12 +12,22 @@
         app:srcCompat="@mipmap/ic_launcher" />
 
     <TextView
-        android:id="@+id/beer_name"
+        android:id="@+id/beer_ko"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="beername"
+        android:text="beer_ko"
         android:textAlignment="center"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/beer_en"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="beer_en"
+        android:textAlignment="center"
+        android:textAllCaps="false"
         android:textSize="20sp"
         android:textStyle="bold" />
 

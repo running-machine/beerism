@@ -38,5 +38,7 @@ dependencies {
     implementation 'com.ogaclejapan.arclayout:library:1.1.0@aar'
     implementation 'gun0912.ted:tedpermission:2.2.2'
     implementation 'com.getbase:floatingactionbutton:1.10.1'
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
 
 }

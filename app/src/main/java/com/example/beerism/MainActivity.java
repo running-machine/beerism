@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     ClipRevealFrame menuLayout;
     private static final int FROM_CAMERA = 0;
     private static final int FROM_ALBUM = 1;
-    FloatingActionButton mainFab;
+    FloatingActionButton DetectionFab , ListFab;
     ArcLayout arcLayout;
     View centerItem;
     // 데이터베이스 객체 인스턴스 생성
@@ -86,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
                     .hideOnTouchOutside()
                     .build();
         }
-
-        mainFab = findViewById(R.id.fab1);
+        ListFab = findViewById(R.id.fab2);
+        DetectionFab = findViewById(R.id.fab1);
         main_nts = findViewById(R.id.nts_top);
         main_nts.setTabIndex(0, true);
         main_nts.setStripFactor(2);
@@ -97,8 +97,14 @@ public class MainActivity extends AppCompatActivity {
         main_vp.setPageTransformer(true, new CubeOutTransformer());
         main_nts.setViewPager(main_vp);
 
+        ListFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(this,)
+            }
+        });
 
-        mainFab.setOnClickListener(new View.OnClickListener() {
+        DetectionFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 makeDialog();

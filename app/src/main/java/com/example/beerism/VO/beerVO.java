@@ -1,15 +1,27 @@
 package com.example.beerism.VO;
 
 public class beerVO {
-    private int alc;
+    private String alc;
     private String ad;
     private String category;
     private String country;
+    private String beer_image;
+
     private String homepage;
     private String name_en;
     private String name_ko;
+    public beerVO(String alc, String ad, String category, String country, String homepage, String name_en, String name_ko, String beer_image) {
+        this.alc = alc;
+        this.ad = ad;
+        this.category = category;
+        this.country = country;
+        this.homepage = homepage;
+        this.name_en = name_en;
+        this.name_ko = name_ko;
+        this.beer_image = beer_image;
+    }
 
-    public beerVO(){};
+    public beerVO(String id, String ad, String alc, String category, String country, String homepage, String img, String name_en, String name_ko){};
 
     public String getAd() {
         return ad;
@@ -19,11 +31,11 @@ public class beerVO {
         this.ad = ad;
     }
 
-    public int getAlc() {
+    public String getAlc() {
         return alc;
     }
 
-    public void setAlc(int alc) {
+    public void setAlc(String alc) {
         this.alc = alc;
     }
 
@@ -65,5 +77,13 @@ public class beerVO {
 
     public void setName_ko(String name_ko) {
         this.name_ko = name_ko;
+    }
+
+    public String getBeer_image() {
+        return beer_image;
+    }
+
+    public void setBeer_image(String beer_image) {
+        this.beer_image = beer_image;
     }
 }
