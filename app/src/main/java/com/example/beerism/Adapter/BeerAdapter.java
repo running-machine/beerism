@@ -12,17 +12,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.beerism.R;
-import com.example.beerism.VO.beerVO;
+import com.example.beerism.VO.BeerVO;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
-public class beerAdapter extends RecyclerView.Adapter<beerAdapter.BeerHolder> {
+public class BeerAdapter extends RecyclerView.Adapter<BeerAdapter.BeerHolder> {
     FirebaseFirestore firebaseFirestore;
-    private ArrayList<beerVO> beerVOArrayList;
+    private ArrayList<BeerVO> beerVOArrayList;
     private Context context;
 
-    public beerAdapter(ArrayList<beerVO> beerVOArrayList, Context context) {
+    public BeerAdapter(ArrayList<BeerVO> beerVOArrayList, Context context) {
         this.beerVOArrayList = beerVOArrayList;
         this.context = context;
     }

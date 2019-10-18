@@ -1,6 +1,6 @@
 package com.example.beerism.VO;
 
-public class beerVO {
+public class BeerVO {
     private String beer_image;
     private String name_ko;
     private String name_en;
@@ -11,7 +11,7 @@ public class beerVO {
     private String ad;
 
 
-    public beerVO(String beer_image, String name_ko, String name_en, String alc, String category, String country, String homepage, String ad) {
+    public BeerVO(String beer_image, String name_ko, String name_en, String alc, String category, String country, String homepage, String ad) {
         this.beer_image = beer_image;
         this.name_ko = name_ko;
         this.name_en = name_en;

@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.beerism.Adapter.beerAdapter;
-import com.example.beerism.VO.beerVO;
+import com.example.beerism.Adapter.BeerAdapter;
+import com.example.beerism.VO.BeerVO;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -23,7 +23,7 @@ public class BeerList extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
-    private ArrayList<beerVO> beerVOArrayList;
+    private ArrayList<BeerVO> beerVOArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +51,7 @@ public class BeerList extends AppCompatActivity {
 
                 for (QueryDocumentSnapshot documentSnapshots : queryDocumentSnapshots) {
                     if (documentSnapshots.get("name_en") != null){
-                        beerVOArrayList.add(0,new beerVO(
+                        beerVOArrayList.add(0,new BeerVO(
                                 documentSnapshots.getString("img"),
                                 documentSnapshots.getString("name_ko"),
                                 documentSnapshots.getString("name_en"),
@@ -67,7 +67,8 @@ public class BeerList extends AppCompatActivity {
             }
         });
 
-        adapter = new beerAdapter(beerVOArrayList,this);
+        adapter = new BeerAdapter(beerVOArrayList,this);
         recyclerView.setAdapter(adapter);
+
     }
 }

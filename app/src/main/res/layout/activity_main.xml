@@ -31,16 +31,16 @@
 
         <!-- Other components and views -->
 
+        <!-- Overlay that dims the screen -->
+
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/main_vp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="300dp"
             android:layout_gravity="center|top"
             android:clipToPadding="false">
 
         </androidx.viewpager.widget.ViewPager>
-
-        <!-- Overlay that dims the screen -->
 
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bar"
@@ -64,53 +64,47 @@
             app:layout_anchor="@id/bar"
             app:maxImageSize="35sp" />
 
-        <com.example.beerism.ClipRevealFrame
-            android:id="@+id/menu_layout"
+
+        <com.ogaclejapan.arclayout.ArcLayout
+            android:id="@+id/arc_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="40dp"
-            android:visibility="visible">
+            app:arc_axisRadius="120dp"
+            app:arc_freeAngle="false"
+            app:arc_origin="bottom"
+            app:arc_radius="180dp"
+            app:arc_reverseAngle="false">
 
-            <com.ogaclejapan.arclayout.ArcLayout
-                android:id="@+id/arc_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:arc_axisRadius="120dp"
-                app:arc_freeAngle="false"
-                app:arc_origin="bottom"
-                app:arc_radius="180dp"
-                app:arc_reverseAngle="false">
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/ReplyOrange"
+                android:gravity="center"
+                android:src="@drawable/object_detection"
+                app:maxImageSize="35sp" />
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/fab1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/ReplyOrange"
-                    android:gravity="center"
-                    android:src="@drawable/object_detection"
-                    app:maxImageSize="35sp" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/ReplyOrange"
+                android:gravity="center"
+                android:src="@drawable/saletag"
+                app:maxImageSize="35sp" />
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/fab2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/ReplyOrange"
-                    android:gravity="center"
-                    android:src="@drawable/saletag"
-                    app:maxImageSize="35sp" />
-
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/fab3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/ReplyOrange"
-                    android:gravity="center"
-                    android:src="@drawable/quality"
-                    app:maxImageSize="35sp" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/ReplyOrange"
+                android:gravity="center"
+                android:src="@drawable/quality"
+                app:maxImageSize="35sp" />
 
 
-            </com.ogaclejapan.arclayout.ArcLayout>
-        </com.example.beerism.ClipRevealFrame>
+        </com.ogaclejapan.arclayout.ArcLayout>
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </LinearLayout>

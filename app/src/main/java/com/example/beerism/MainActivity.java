@@ -42,8 +42,7 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity {
     NavigationTabStrip main_nts;
     ViewPager main_vp;
-    View rootLayout;
-    ClipRevealFrame menuLayout;
+
     private static final int FROM_CAMERA = 0;
     private static final int FROM_ALBUM = 1;
     FloatingActionButton DetectionFab , ListFab;
@@ -63,10 +62,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-//        rootLayout = findViewById(R.id.coordinatorLayout);
-//        menuLayout = (ClipRevealFrame) findViewById(R.id.menu_layout);
-//        arcLayout = (ArcLayout) findViewById(R.id.arc_layout);
-//        centerItem = findViewById(R.id.center_item);
         // 앱 최초 실행 여부 //
         SharedPreferences pref = getSharedPreferences("isFirst", Activity.MODE_PRIVATE);
 
