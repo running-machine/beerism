@@ -34,6 +34,7 @@ import com.google.firebase.ml.custom.FirebaseModelDataType;
 import com.google.firebase.ml.custom.FirebaseModelInputOutputOptions;
 import com.google.firebase.ml.custom.FirebaseModelInputs;
 import com.google.firebase.ml.custom.FirebaseModelInterpreter;
+import com.google.firebase.ml.custom.FirebaseModelOptions;
 import com.google.firebase.ml.custom.FirebaseModelOutputs;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata;
@@ -171,38 +172,45 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
                             .setInputFormat(0, FirebaseModelDataType.BYTE, inputDims)
                             .setOutputFormat(0, FirebaseModelDataType.BYTE, outputDims)
                             .build();
+
             FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions
                     .Builder()
                     .requireWifi()
                     .build();
-            FirebaseRemoteModel remoteModel = new FirebaseRemoteModel.Bulider(HOSTED_MODEL_NAME)
+
+            FirebaseRemoteModel RemoteModel= new FirebaseRemoteModel.Builder(HOSTED_MODEL_NAME)
                     .enableModelUpdates(true)
                     .setInitialDownloadConditions(conditions)
-                    .setUpdatesDownloadConditions(conditions)  // You could also specify
-                    // different conditions
-                    // for updates
+                    .setUpdatesDownloadConditions(conditions)
                     .build();
+
             FirebaseLocalModel localModel =
                     new FirebaseLocalModel.Builder("asset")
                             .setAssetFilePath(LOCAL_MODEL_ASSET).build();
+
             FirebaseModelManager manager = FirebaseModelManager.getInstance();
-            manager.registerRemoteModel(remoteModel);
+            manager.registerRemoteModel(RemoteModel);
             manager.registerLocalModel(localModel);
+
+
             FirebaseModelOptions modelOptions =
                     new FirebaseModelOptions.Builder()
                             .setRemoteModelName(HOSTED_MODEL_NAME)
                             .setLocalModelName("asset")
                             .build();
+
+
             mInterpreter = FirebaseModelInterpreter.getInstance(modelOptions);
         } catch (FirebaseMLException e) {
-            showToast("Error while setting up the model");
+            showToast("모델 셋팅 오류");
             e.printStackTrace();
         }
     }
 
+    // 앱에서 모델을 사용하기 위한 메소드
     private void runModelInference() {
         if (mInterpreter == null) {
-            Log.e(TAG, "Image classifier has not been initialized; Skipped.");
+            Log.e(TAG, "이미지 분류 초기화 실패");
             return;
         }
         // Create input data.
