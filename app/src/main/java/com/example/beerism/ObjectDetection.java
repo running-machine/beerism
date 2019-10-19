@@ -11,10 +11,8 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -97,7 +95,7 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
     /* Preallocated buffers for storing image data. */
     private final int[] intValues = new int[DIM_IMG_SIZE_X * DIM_IMG_SIZE_Y];
     private ImageView mImageView;
-    private Button mRunCustomModelButton;
+    private ImageButton mRunCustomModelButton;
     private Bitmap mSelectedImage;
     private GraphicOverlay mGraphicOverlay;
     // Max width (portrait mode)
@@ -135,29 +133,29 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_camera);
 
-        mImageView = findViewById(R.id.image_view);
+        mImageView = findViewById(R.id.view_finder);
 
-        mRunCustomModelButton = findViewById(R.id.button_run_custom_model);
+        mRunCustomModelButton = findViewById(R.id.capture_button);
 
-        mGraphicOverlay = findViewById(R.id.graphic_overlay);
+//        mGraphicOverlay = findViewById(R.id.graphic_overlay);
 
 
 
-        mRunCustomModelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                runModelInference();
-            }
-        });
-        Spinner dropdown = findViewById(R.id.spinner);
-        String[] items = new String[]{"Test Image 1 (Text)", "Test Image 2 (Text)", "Test Image 3" +
-                " (Face)", "Test Image 4 (Object)", "Test Image 5 (Object)"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout
-                .simple_spinner_dropdown_item, items);
-        dropdown.setAdapter(adapter);
-        dropdown.setOnItemSelectedListener(this);
+//        mRunCustomModelButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                runModelInference();
+//            }
+//        });
+//        Spinner dropdown = findViewById(R.id.spinner);
+//        String[] items = new String[]{"Test Image 1 (Text)", "Test Image 2 (Text)", "Test Image 3" +
+//                " (Face)", "Test Image 4 (Object)", "Test Image 5 (Object)"};
+//        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout
+//                .simple_spinner_dropdown_item, items);
+//        dropdown.setAdapter(adapter);
+//        dropdown.setOnItemSelectedListener(this);
         initCustomModel();
     }
 
@@ -226,7 +224,7 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             e.printStackTrace();
-                            showToast("Error running model inference");
+                            showToast("인식 오류");
                         }
                     })
                     .continueWith(
@@ -245,7 +243,7 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
                             });
         } catch (FirebaseMLException e) {
             e.printStackTrace();
-            showToast("Error running model inference");
+            showToast("모델 실행중 오류 발생");
         }
 
     }

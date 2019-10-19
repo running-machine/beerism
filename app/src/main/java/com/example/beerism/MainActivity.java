@@ -42,7 +42,7 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity {
     NavigationTabStrip main_nts;
     ViewPager main_vp;
-
+    private FloatingActionButton DAFab;
     private static final int FROM_CAMERA = 0;
     private static final int FROM_ALBUM = 1;
     FloatingActionButton DetectionFab , ListFab;
