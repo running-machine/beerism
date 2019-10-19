@@ -39,6 +39,7 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -143,14 +144,15 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
 //        mGraphicOverlay = findViewById(R.id.graphic_overlay);
 
         Uri receivedUri = getIntent().getParcelableExtra("imageUri");
-        mImageView.setImageURI(receivedUri);
+        mSelectedImage = convertUriToBitmap(receivedUri);
+        mImageView.setImageBitmap(mSelectedImage);
 
-//        mRunCustomModelButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                runModelInference();
-//            }
-//        });
+        mRunCustomModelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                runModelInference();
+            }
+        });
 //        Spinner dropdown = findViewById(R.id.spinner);
 //        String[] items = new String[]{"Test Image 1 (Text)", "Test Image 2 (Text)", "Test Image 3" +
 //                " (Face)", "Test Image 4 (Object)", "Test Image 5 (Object)"};
@@ -230,19 +232,21 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
                         }
                     })
                     .continueWith(
-                            new Continuation<FirebaseModelOutputs, List<String>>() {
-                                @Override
-                                public List<String> then(Task<FirebaseModelOutputs> task) {
-                                    byte[][] labelProbArray = task.getResult()
-                                            .<byte[][]>getOutput(0);
-                                    List<String> topLabels = getTopLabels(labelProbArray);
-                                    mGraphicOverlay.clear();
-                                    GraphicOverlay.Graphic labelGraphic = new LabelGraphic
-                                            (mGraphicOverlay, topLabels);
-                                    mGraphicOverlay.add(labelGraphic);
-                                    return topLabels;
-                                }
-                            });
+                        new Continuation<FirebaseModelOutputs, List<String>>() {
+                            @Override
+                            public List<String> then(Task<FirebaseModelOutputs> task) {
+                                byte[][] labelProbArray = task.getResult()
+                                        .<byte[][]>getOutput(0);
+                                List<String> topLabels = getTopLabels(labelProbArray);
+                                mGraphicOverlay.clear();
+                                GraphicOverlay.Graphic labelGraphic = new LabelGraphic
+                                        (mGraphicOverlay, topLabels);
+                                mGraphicOverlay.add(labelGraphic);
+                                Toast.makeText(ObjectDetection.this, "분석 완료", Toast.LENGTH_LONG).show();
+
+                                return topLabels;
+                            }
+                        });
         } catch (FirebaseMLException e) {
             e.printStackTrace();
             showToast("모델 실행중 오류 발생");
@@ -291,8 +295,7 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
     /**
      * Writes Image data into a {@code ByteBuffer}.
      */
-    private synchronized ByteBuffer convertBitmapToByteBuffer(
-            Bitmap bitmap, int width, int height) {
+    private synchronized ByteBuffer convertBitmapToByteBuffer(Bitmap bitmap, int width, int height) {
         ByteBuffer imgData =
                 ByteBuffer.allocateDirect(
                         DIM_BATCH_SIZE * DIM_IMG_SIZE_X * DIM_IMG_SIZE_Y * DIM_PIXEL_SIZE);
@@ -316,7 +319,6 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
     }
 
     // Functions for loading images from app assets.
-
     private void showToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
@@ -412,6 +414,23 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
         // Do nothing
+    }
+
+    private Bitmap convertUriToBitmap(Uri uri) {
+        Bitmap image = null;
+        try {
+            InputStream image_stream;
+            try {
+                image_stream = this.getContentResolver().openInputStream(uri);
+                image = BitmapFactory.decodeStream(image_stream);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return image;
     }
 
     // 파이어베이스비전 이미지를 호출하기전 위치 변환
