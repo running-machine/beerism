@@ -6,6 +6,7 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
@@ -141,7 +142,8 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
 
 //        mGraphicOverlay = findViewById(R.id.graphic_overlay);
 
-
+        Uri receivedUri = getIntent().getParcelableExtra("imageUri");
+        mImageView.setImageURI(receivedUri);
 
 //        mRunCustomModelButton.setOnClickListener(new View.OnClickListener() {
 //            @Override

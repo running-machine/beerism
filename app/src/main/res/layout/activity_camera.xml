@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextureView
+    <ImageView
         android:id="@+id/view_finder"
         android:layout_width="640px"
         android:layout_height="640px"
