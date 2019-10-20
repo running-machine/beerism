@@ -23,9 +23,9 @@ tools:context=".MainActivity">
         android:id="@+id/nts_top"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:layout_marginTop="50dp"
         android:background="@color/colordark"
         android:scrollbarDefaultDelayBeforeFade="400"
-        android:layout_marginTop="50dp"
         app:nts_active_color="@color/ReplyOrange"
         app:nts_animation_duration="200"
         app:nts_color="@color/ReplyOrange"
@@ -62,8 +62,8 @@ tools:context=".MainActivity">
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|bottom"
-            app:menu_colorPressed="@color/ReplyOrange"
             app:menu_colorNormal="@color/ReplyOrange"
+            app:menu_colorPressed="@color/ReplyOrange"
             app:menu_colorRipple="@color/ReplyOrange"
             >
 
@@ -71,25 +71,25 @@ tools:context=".MainActivity">
                 android:id="@+id/fab1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fab_colorNormal="@color/ReplyOrange"
                 android:src ="@drawable/photo_camera"
+                app:fab_colorNormal="@color/ReplyOrange"
                 app:fab_label="item_detection" />
 
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/fab2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fab_label="search"
+                android:src="@drawable/magnifying_glass"
                 app:fab_colorNormal="@color/ReplyOrange"
-                android:src="@drawable/magnifying_glass"/>
+                app:fab_label="search"/>
 
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/fab3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:src="@drawable/quality"
                 app:fab_colorNormal="@color/ReplyOrange"
-                app:fab_label="Recommendation"
-                android:src="@drawable/quality"/>
+                app:fab_label="Recommendation"/>
 
 
         </com.github.clans.fab.FloatingActionMenu>
