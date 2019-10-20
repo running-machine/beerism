@@ -51,14 +51,16 @@ public class Login extends AppCompatActivity {
             actionBar.hide();
         }
 
-        AppCompatTextView forgotPasswordBtn =  findViewById(R.id.forgot_password);
-        forgotPasswordBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(Login.this, "Todo - Forgot password implementation", Toast.LENGTH_SHORT).show();
-            }
-        });
+        //비빌번호 찾기 로직
+//        AppCompatTextView forgotPasswordBtn =  findViewById(R.id.forgot_password);
+//        forgotPasswordBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(Login.this, "Todo - Forgot password implementation", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
+        // 회원가입 로직
         AppCompatTextView signUpBtn = findViewById(R.id.signup_btn);
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +74,7 @@ public class Login extends AppCompatActivity {
         emailbox = findViewById(R.id.email);
         passwordbox = findViewById(R.id.password);
 
+        // 로그인 로직
         AppCompatButton submitBtn =  findViewById(R.id.login_btn);
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,9 +84,9 @@ public class Login extends AppCompatActivity {
                 String password = Objects.requireNonNull(passwordbox.getText()).toString();
 
                 if (TextUtils.isEmpty(emailAddress) || TextUtils.isEmpty(password)) {
-                    Toast.makeText(Login.this, "Login Fields must not be empty", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, "모든칸을 입력해주세요", Toast.LENGTH_SHORT).show();
                 } else if (!emailAddress.contains("@")) {
-                    Toast.makeText(Login.this, "Invalid email address", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, "이메일 형식으로 입력해주세요.", Toast.LENGTH_SHORT).show();
                 } else {
                     UserImpl userImplementation = new UserImpl(Login.this);
                     userImplementation.getLoginUserByEmail(emailAddress);

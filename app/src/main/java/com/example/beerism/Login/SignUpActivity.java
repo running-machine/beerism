@@ -36,7 +36,7 @@ public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = SignUpActivity.class.getSimpleName();
     UsersVO usersVO;
     private AppCompatEditText usernameBox, emailBox, passwordBox;
-    String username,password,email;
+    String username, password, email;
     private Context context;
     private FirebaseFirestore firebaseFirestore;
 
@@ -54,14 +54,12 @@ public class SignUpActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
 
-
         setContentView(R.layout.activity_signup);
 
         ActionBar actionBar = getSupportActionBar();
         if (null != actionBar) {
             actionBar.hide();
         }
-
 
         AppCompatTextView signUpLink = (AppCompatTextView) findViewById(R.id.signup_link);
         signUpLink.setOnClickListener(new View.OnClickListener() {
@@ -73,13 +71,11 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-
         usernameBox = findViewById(R.id.username);
         emailBox = findViewById(R.id.email);
         passwordBox = findViewById(R.id.password);
 
         AppCompatButton signUpBtn = findViewById(R.id.signup_btn);
-
 
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,14 +93,13 @@ public class SignUpActivity extends AppCompatActivity {
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
                                     //데이터를 가져오는 작업이 잘 작동했을 경우
                                     if (task.isSuccessful()) {
                                         for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                             if (documentSnapshot.getString("email").equals(emailBox.getText().toString())) {
-                                                Toast.makeText(getApplicationContext(),"이메일이 이미 존재합니다.",Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(getApplicationContext(), "이메일이 이미 존재합니다.", Toast.LENGTH_SHORT).show();
                                                 break;
-                                            }else{
+                                            } else {
                                                 Map<String, Object> user = new HashMap<>();
                                                 user.put(Constants.DocumentFileds.NAME, username);
                                                 user.put(Constants.DocumentFileds.EMAIL, email);
@@ -118,49 +113,8 @@ public class SignUpActivity extends AppCompatActivity {
                                 }
 
                             });
-
-//                    firebaseFirestore.collection(Constants.USER_COLLECTION)
-//                            .whereEqualTo("email", email)
-//                            .get()
-//                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                                @Override
-//                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                                    if (task.isSuccessful()) {
-//                                        for (QueryDocumentSnapshot document : task.getResult()) {
-//                                            Log.d(TAG, document.getId() + " => " + document.getData());
-//                                        }
-//                                    } else {
-//                                        Log.d(TAG, "Error getting documents: ", task.getException());
-//                                    }
-//                                }
-//                            });
-
                 }
 
-//                    firebaseFirestore.collection(Constants.USER_COLLECTION).whereEqualTo("email", email).get().
-//                    }
-//                    {
-//                        Map<String, Object> user = new HashMap<>();
-//
-//                        user.put(Constants.DocumentFileds.NAME, username);
-//                        user.put(Constants.DocumentFileds.EMAIL, email);
-//                        user.put(Constants.DocumentFileds.PASSWORD, password);
-//
-//                        firebaseFirestore.collection(Constants.USER_COLLECTION).document(email).set(user);
-////                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-////                                    @Override
-////                                    public void onSuccess(Void aVoid) {
-////                                        Toast.makeText(context, "정상적으로 회원가입되었습니다.", Toast.LENGTH_LONG).show();
-////                                    }
-////                                }).addOnFailureListener(new OnFailureListener() {
-////                            @Override
-////                            public void onFailure(@NonNull Exception e) {
-////                                Toast.makeText(context, "회원가입에 실패했습니다.", Toast.LENGTH_LONG).show();
-////                            }
-////                        });
-//
-//                    }
-//                }
             }
         });
     }

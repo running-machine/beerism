@@ -10,7 +10,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -26,6 +25,7 @@ public class UserImpl implements MemberRepository {
     private Context context;
     private FirebaseFirestore firebaseFirestore;
     private CustomApplication app;
+
     public UserImpl(Context context) {
         app = CustomApplication.getInstance();
         firebaseFirestore = app.getDbInstance();
@@ -74,22 +74,27 @@ public class UserImpl implements MemberRepository {
 
     @Override
     public void getLoginUserByEmail(String email) {
-        DocumentReference docRef = firebaseFirestore.collection(Constants.USER_COLLECTION).document(email);
-
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore.collection(Constants.USER_COLLECTION).document(email)
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     UsersVO user = Objects.requireNonNull(task.getResult()).toObject(UsersVO.class);
                     if (user != null) {
-                        Toast.makeText(context,"유저정보는"+user.getName()+"입니다.",Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "유저정보는" + user.getEmail() + "입니다.", Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(context, "유저 정보가 없습니다.",Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "유저 정보가 없습니다.", Toast.LENGTH_LONG).show();
                     }
                 } else {
                     String excep = Objects.requireNonNull(task.getException()).getMessage();
                     Toast.makeText(context, excep + "오류발생!", Toast.LENGTH_LONG).show();
                 }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(context, "실패!", Toast.LENGTH_SHORT).show();
             }
         });
     }
