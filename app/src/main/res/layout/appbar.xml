@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+tools:context=".MainActivity">
+
+<com.google.android.material.appbar.AppBarLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/border_line"
+        app:titleTextColor="#c4c4c4"
+        />
+</com.google.android.material.appbar.AppBarLayout>
+    <com.gigamole.navigationtabstrip.NavigationTabStrip
+        android:id="@+id/nts_top"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="50dp"
+        android:background="@color/colordark"
+        android:scrollbarDefaultDelayBeforeFade="400"
+        app:nts_active_color="@color/ReplyOrange"
+        app:nts_animation_duration="200"
+        app:nts_color="@color/ReplyOrange"
+        app:nts_corners_radius="5dp"
+        app:nts_factor="2"
+        app:nts_gravity="top"
+        app:nts_inactive_color="#c4c4c4"
+        app:nts_size="17sp"
+        app:nts_titles="@array/titles"
+        app:nts_type="line"
+        app:nts_weight="7dp" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="110dp"
+        >
+
+        <!-- Other components and views -->
+
+        <!-- Overlay that dims the screen -->
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/main_vp"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:layout_gravity="center|top"
+            android:clipToPadding="false">
+
+        </androidx.viewpager.widget.ViewPager>
+        <com.github.clans.fab.FloatingActionMenu
+            android:id="@+id/arc_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            app:menu_colorNormal="@color/ReplyOrange"
+            app:menu_colorPressed="@color/ReplyOrange"
+            app:menu_colorRipple="@color/ReplyOrange"
+            >
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src ="@drawable/photo_camera"
+                app:fab_colorNormal="@color/ReplyOrange"
+                app:fab_label="item_detection" />
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/magnifying_glass"
+                app:fab_colorNormal="@color/ReplyOrange"
+                app:fab_label="search"/>
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/quality"
+                app:fab_colorNormal="@color/ReplyOrange"
+                app:fab_label="Recommendation"/>
+
+
+        </com.github.clans.fab.FloatingActionMenu>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

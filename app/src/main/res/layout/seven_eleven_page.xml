@@ -7,11 +7,14 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="25dp"
         android:adjustViewBounds="false"
         android:scaleType="fitXY"
-        app:srcCompat="@drawable/seven_eleven_logo" />
+        app:srcCompat="@drawable/seven_eleven_logo_remove_bg" />
 
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/seven_discount"

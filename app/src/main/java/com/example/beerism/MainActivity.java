@@ -11,13 +11,19 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -31,9 +37,10 @@ import com.gigamole.navigationtabstrip.NavigationTabStrip;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.Target;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.ogaclejapan.arclayout.ArcLayout;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int FROM_CAMERA = 0;
     private static final int FROM_ALBUM = 1;
     FloatingActionButton DetectionFab , ListFab;
-    ArcLayout arcLayout;
+    FloatingActionMenu arcLayout;
     View centerItem;
     // 데이터베이스 객체 인스턴스 생성
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
@@ -91,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         main_vp.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
         main_vp.setPageTransformer(true, new CubeOutTransformer());
         main_nts.setViewPager(main_vp);
+        this.InitializeLayout();
 
         ListFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,6 +115,64 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+        //뒤로가기 버튼 누를시 navigation바 없에는 부분
+    }
+
+    private void InitializeLayout() {
+        //toolBar를 통해 App Bar 생성
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        //App Bar의 좌측 영영에 Drawer를 Open 하기 위한 Incon 추가
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.beer);
+
+        DrawerLayout drawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(
+                this,
+                drawLayout,
+                toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        );
+
+        drawLayout.addDrawerListener(actionBarDrawerToggle);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId())
+                {
+                    case R.id.menuitem1:
+                        Toast.makeText(getApplicationContext(), "SelectedItem 1", Toast.LENGTH_SHORT).show();
+                    case R.id.menuitem2:
+                        Toast.makeText(getApplicationContext(), "SelectedItem 2", Toast.LENGTH_SHORT).show();
+                    case R.id.menuitem3:
+                        Toast.makeText(getApplicationContext(), "SelectedItem 3", Toast.LENGTH_SHORT).show();
+                }
+
+                DrawerLayout drawer = findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+        });
+
+    }
+
 
     private void makeDialog() {
         AlertDialog.Builder alt_bld = new AlertDialog.Builder(MainActivity.this, R.style.Alert);
