@@ -55,7 +55,7 @@ public class UserImpl implements MemberRepository {
 
         user.put(Constants.DocumentFileds.NAME, usersVO.getName());
         user.put(Constants.DocumentFileds.EMAIL, usersVO.getEmail());
-        user.put(Constants.DocumentFileds.password, usersVO.getPassword());
+        user.put(Constants.DocumentFileds.PASSWORD, usersVO.getPassword());
 
         Task<Void> newUser = firebaseFirestore.collection(Constants.USER_COLLECTION).document(usersVO.getEmail()).set(user);
         newUser.addOnSuccessListener(new OnSuccessListener<Void>() {

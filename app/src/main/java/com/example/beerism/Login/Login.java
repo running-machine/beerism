@@ -51,7 +51,7 @@ public class Login extends AppCompatActivity {
             actionBar.hide();
         }
 
-        AppCompatTextView forgotPasswordBtn = (AppCompatTextView) findViewById(R.id.forgot_password);
+        AppCompatTextView forgotPasswordBtn =  findViewById(R.id.forgot_password);
         forgotPasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,7 +59,7 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        AppCompatTextView signUpBtn = (AppCompatTextView) findViewById(R.id.signup_btn);
+        AppCompatTextView signUpBtn = findViewById(R.id.signup_btn);
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,10 +69,10 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        emailbox = (AppCompatEditText) findViewById(R.id.email);
-        passwordbox = (AppCompatEditText) findViewById(R.id.password);
+        emailbox = findViewById(R.id.email);
+        passwordbox = findViewById(R.id.password);
 
-        AppCompatButton submitBtn = (AppCompatButton) findViewById(R.id.login_btn);
+        AppCompatButton submitBtn =  findViewById(R.id.login_btn);
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

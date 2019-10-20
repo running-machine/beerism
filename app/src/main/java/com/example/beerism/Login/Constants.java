@@ -9,6 +9,6 @@ public class Constants {
     public static class DocumentFileds {
         public static final String EMAIL= "email";
         public static final String NAME = "name";
-        public static final String password = "password";
+        public static final String PASSWORD = "password";
     }
 }
