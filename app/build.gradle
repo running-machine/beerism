@@ -39,7 +39,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:21.2.0'
     implementation 'com.github.amlcurran.showcaseview:library:5.4.3'
     implementation 'com.github.clans:fab:1.6.4'
-    implementation 'com.rom4ek:arcnavigationview:1.0.3'
     implementation 'gun0912.ted:tedpermission:2.2.2'
     implementation 'com.getbase:floatingactionbutton:1.10.1'
     implementation 'com.github.bumptech.glide:glide:4.10.0'
@@ -53,5 +52,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-ml-vision:19.0.3'
     implementation 'com.google.firebase:firebase-ml-vision-image-label-model:17.0.2'
     implementation 'com.google.firebase:firebase-ml-model-interpreter:18.0.0'
+    implementation 'com.github.clans:fab:1.6.4'
+    implementation 'com.rom4ek:arcnavigationview:1.0.3'
+    implementation 'com.tomer:fadingtextview:2.5'
+
 }
 apply plugin: 'com.google.gms.google-services'
