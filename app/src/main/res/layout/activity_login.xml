@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:srcCompat="@drawable/main_logo" />
+            app:srcCompat="@drawable/mainlogo" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -37,16 +37,16 @@ public class BeerAdapter extends RecyclerView.Adapter<BeerAdapter.BeerHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull BeerHolder holder, int position) {
-        Glide.with(holder.itemView)
+        Glide.with(context)
                 .load(beerVOArrayList.get(position).getBeer_image())
                 .into(holder.beerImage);
         holder.beerKo.setText(beerVOArrayList.get(position).getName_ko());
         holder.beerEn.setText(beerVOArrayList.get(position).getName_en());
-        holder.beerAd.setText(beerVOArrayList.get(position).getAd());
-        holder.beerHomepage.setText(beerVOArrayList.get(position).getHomepage());
-        holder.beerCountry.setText(beerVOArrayList.get(position).getCountry());
+        //holder.beerAd.setText(beerVOArrayList.get(position).getAd());
+        //holder.beerHomepage.setText(beerVOArrayList.get(position).getHomepage());
+        //holder.beerCountry.setText(beerVOArrayList.get(position).getCountry());
         holder.beerCategory.setText(beerVOArrayList.get(position).getCategory());
-        holder.beerAlc.setText(beerVOArrayList.get(position).getAlc());
+        holder.beerAlc.setText(beerVOArrayList.get(position).getAlc() + "%");
 
     }
 
@@ -66,9 +66,9 @@ public class BeerAdapter extends RecyclerView.Adapter<BeerAdapter.BeerHolder> {
             this.beerImage = itemView.findViewById(R.id.beer_img);
             this.beerAlc = itemView.findViewById(R.id.beer_alc);
             this.beerCategory = itemView.findViewById(R.id.beer_category);
-            this.beerCountry = itemView.findViewById(R.id.beer_country);
-            this.beerHomepage = itemView.findViewById(R.id.beer_homepage);
-            this.beerAd = itemView.findViewById(R.id.beer_ad);
+           // this.beerCountry = itemView.findViewById(R.id.beer_country);
+            //this.beerHomepage = itemView.findViewById(R.id.beer_homepage);
+            //this.beerAd = itemView.findViewById(R.id.beer_ad);
             this.beerKo = itemView.findViewById(R.id.beer_ko);
             this.beerEn = itemView.findViewById(R.id.beer_en);
         }

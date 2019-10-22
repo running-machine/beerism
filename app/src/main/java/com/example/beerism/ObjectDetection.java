@@ -249,6 +249,13 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
 //                    }
 //                });
 
+<<<<<<< HEAD
+=======
+            mDataOptions = new FirebaseModelInputOutputOptions.Builder()
+                    .setInputFormat(0, FirebaseModelDataType.FLOAT32, inputDims)
+                    .setOutputFormat(0, FirebaseModelDataType.INT32, outputDims)
+                    .build();
+>>>>>>> 34d4142510766733d78daa13e1378f954fea2e3a
 
             mInterpreter = FirebaseModelInterpreter.getInstance(modelOptions);
         } catch (FirebaseMLException e) {
