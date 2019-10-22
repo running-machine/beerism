@@ -1,20 +1,13 @@
 package com.example.beerism;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
-import android.graphics.Path;
-import android.media.Image;
-
 import android.graphics.Color;
 import android.media.Image;
 import android.net.Uri;
-
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
@@ -25,15 +18,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
 
-import com.google.android.gms.common.Feature;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.ml.common.FirebaseMLException;
 import com.google.firebase.ml.common.modeldownload.FirebaseLocalModel;
@@ -46,27 +36,16 @@ import com.google.firebase.ml.custom.FirebaseModelInputs;
 import com.google.firebase.ml.custom.FirebaseModelInterpreter;
 import com.google.firebase.ml.custom.FirebaseModelOptions;
 import com.google.firebase.ml.custom.FirebaseModelOutputs;
-import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata;
-import com.google.protobuf.ByteString;
-
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-
-import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
-import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -249,13 +228,11 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
 //                    }
 //                });
 
-<<<<<<< HEAD
-=======
             mDataOptions = new FirebaseModelInputOutputOptions.Builder()
                     .setInputFormat(0, FirebaseModelDataType.FLOAT32, inputDims)
                     .setOutputFormat(0, FirebaseModelDataType.INT32, outputDims)
                     .build();
->>>>>>> 34d4142510766733d78daa13e1378f954fea2e3a
+
 
             mInterpreter = FirebaseModelInterpreter.getInstance(modelOptions);
         } catch (FirebaseMLException e) {

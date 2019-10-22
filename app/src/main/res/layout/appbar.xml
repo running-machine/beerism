@@ -63,11 +63,8 @@ tools:context=".MainActivity">
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|bottom"
-<<<<<<< HEAD
             app:menu_icon="@drawable/fab_add"
-=======
             android:layout_margin="20dp"
->>>>>>> 34d4142510766733d78daa13e1378f954fea2e3a
             app:menu_colorNormal="@color/ReplyOrange"
             app:menu_colorPressed="@color/ReplyOrange"
             app:menu_colorRipple="@color/ReplyOrange">
