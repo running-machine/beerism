@@ -6,8 +6,8 @@ import android.preference.PreferenceManager;
 public class Session {
     static final String PREF_USER_NAME = null;
 
-    static Session getSeesion(Context context){
-        return PreferenceManager.getDefaultSharedPreferences(context);
-    }
+//    static Session getSeesion(Context context){
+//        return PreferenceManager.getDefaultSharedPreferences(context);
+//    }
 
 }

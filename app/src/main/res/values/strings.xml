@@ -1,11 +1,9 @@
 <resources>
     <string name="app_name">Beerism</string>
-<<<<<<< HEAD
+
     <string name="title_activity_login">Login</string>
 
-=======
     <string name="navigation_drawer_open">Drawer Open</string>
-    <string name="navigation_drawer_close">Drawer Closed</string>
->>>>>>> origin/develop
+<string name="navigation_drawer_close">Drawer Closed</string>
 
 </resources>
