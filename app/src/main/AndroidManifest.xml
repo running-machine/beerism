@@ -34,6 +34,7 @@
             android:value="label" />
 
         <activity android:name=".BeerList" />
+        <activity android:name=".ObjectDetection" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
