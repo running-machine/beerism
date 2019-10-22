@@ -59,5 +59,6 @@ dependencies {
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'com.rom4ek:arcnavigationview:1.0.3'
     implementation 'com.tomer:fadingtextview:2.5'
+    implementation 'com.github.zhaozhentao:InboxLayout:cb8433f254'
 }
 apply plugin: 'com.google.gms.google-services'

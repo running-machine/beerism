@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="8"
             android:layout_margin="5dp"
-            android:text="사진 업로드"
+            android:text="이미지 인식"
             android:textColor="#c4c4c4"
             android:textSize="30dp"
             />
