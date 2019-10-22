@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -42,12 +43,14 @@ import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.Target;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.File;
 import java.io.IOException;
+
+//import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -57,13 +60,15 @@ public class MainActivity extends AppCompatActivity {
     private static final int FROM_CAMERA = 0;
     private static final int FROM_ALBUM = 1;
     FloatingActionButton DetectionFab , ListFab;
-    FloatingActionMenu arcLayout;
+//    FloatingActionMenu arcLayout;
     View centerItem;
     // 데이터베이스 객체 인스턴스 생성
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private ImageView img1;
     private Uri imgUri, photoURI, albumURI;
     private String mCurrentPhotoPath;
+    FirebaseAuth auth;
+    private TextView welcomText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +76,7 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
-
-
+        auth = FirebaseAuth.getInstance();
         // 앱 최초 실행 여부 //
         SharedPreferences pref = getSharedPreferences("isFirst", Activity.MODE_PRIVATE);
 
@@ -137,13 +141,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void InitializeLayout() {
+
         //toolBar를 통해 App Bar 생성
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setLogo(R.drawable.main_logo);
 
         //App Bar의 좌측 영영에 Drawer를 Open 하기 위한 Incon 추가
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.beer);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.list_menu);
 
         DrawerLayout drawLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);

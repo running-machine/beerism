@@ -7,4 +7,10 @@
         <item>7-eleven</item>
     </string-array>
 
+    <string-array name="welcome">
+        <item>님! 반갑습니다.</item>
+        <item>님! 오늘 맥주 한잔 어떠세요?</item>
+        <item>님! 시원한 맥주로 스트레스를 날려버려요!</item>
+    </string-array>
+
 </resources>
