@@ -47,7 +47,6 @@ public class BeerAdapter extends RecyclerView.Adapter<BeerAdapter.BeerHolder> {
         //holder.beerCountry.setText(beerVOArrayList.get(position).getCountry());
         holder.beerCategory.setText(beerVOArrayList.get(position).getCategory());
         holder.beerAlc.setText(beerVOArrayList.get(position).getAlc() + "%");
-
     }
 
     @Override

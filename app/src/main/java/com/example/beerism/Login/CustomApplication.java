@@ -5,7 +5,6 @@ import android.app.Application;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class CustomApplication extends Application {
-
     private static final String TAG = CustomApplication.class.getSimpleName();
 
     public static CustomApplication instance = null;

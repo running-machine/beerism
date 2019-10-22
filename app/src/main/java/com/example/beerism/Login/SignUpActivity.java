@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
-
     private static final String TAG = SignUpActivity.class.getSimpleName();
     UsersVO usersVO;
     private AppCompatEditText usernameBox, emailBox, passwordBox;
@@ -114,7 +113,6 @@ public class SignUpActivity extends AppCompatActivity {
 
                             });
                 }
-
             }
         });
     }

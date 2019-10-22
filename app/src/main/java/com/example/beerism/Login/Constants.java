@@ -3,8 +3,7 @@ package com.example.beerism.Login;
 public class Constants {
     public static final String USER_COLLECTION = "member";
 
-    public Constants() {
-    }
+    public Constants() { }
 
     public static class DocumentFileds {
         public static final String EMAIL= "email";

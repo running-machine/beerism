@@ -1,6 +1,8 @@
 package com.example.beerism.VO;
 
 public class UsersVO {
+    private String email;
+    private String password;
     private String name;
     private String Recommend;
 
@@ -28,9 +30,6 @@ public class UsersVO {
         this.name = name;
     }
 
-    private String email;
-    private String password;
-
     public String getRecommend() {
         return Recommend;
     }
@@ -38,6 +37,4 @@ public class UsersVO {
     public void setRecommend(String recommend) {
         Recommend = recommend;
     }
-
-
 }

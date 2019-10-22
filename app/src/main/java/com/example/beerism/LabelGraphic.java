@@ -26,7 +26,6 @@ import java.util.List;
  * Graphic instance for rendering image label.txt.
  */
 public class LabelGraphic extends GraphicOverlay.Graphic {
-
     private final Paint textPaint;
     private final Paint bgPaint;
     private final GraphicOverlay overlay;
