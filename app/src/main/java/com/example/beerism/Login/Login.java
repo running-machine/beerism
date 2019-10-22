@@ -19,6 +19,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
 
+import com.example.beerism.MainActivity;
 import com.example.beerism.R;
 
 import java.util.Objects;
@@ -88,8 +89,11 @@ public class Login extends AppCompatActivity {
                 } else if (!emailAddress.contains("@")) {
                     Toast.makeText(Login.this, "이메일 형식으로 입력해주세요.", Toast.LENGTH_SHORT).show();
                 } else {
-                    UserImpl userImplementation = new UserImpl(Login.this);
-                    userImplementation.getLoginUserByEmail(emailAddress);
+                    Intent intent =new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                    finish();
+//                    UserImpl userImplementation = new UserImpl(Login.this);
+//                    userImplementation.getLoginUserByEmail(emailAddress);
                 }
             }
         });
