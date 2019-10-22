@@ -20,16 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:srcCompat="@drawable/chat_logo"/>
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="One LOVE CHAT"
-            android:textAllCaps="true"
-            android:textColor="@color/colorWhite"
-            android:textSize="15sp"/>
+            app:srcCompat="@drawable/main_logo" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
