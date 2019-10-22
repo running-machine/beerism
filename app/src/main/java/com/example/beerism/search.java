@@ -29,19 +29,17 @@ public class search extends AppCompatActivity {
         setContentView(R.layout.activity_search);
         firebaseFirestore = FirebaseFirestore.getInstance();
 
-
     }
 
     private void intitView(){
         getIntentDate();
         recyclerView = findViewById(R.id.notice_search_recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new BeerAdapter(this,)
     }
 
     private void getIntentDate() {
         Intent intent =getIntent();
-        context = intent.getExtras().getSerializable(context.NO)
+
 
     }
 }

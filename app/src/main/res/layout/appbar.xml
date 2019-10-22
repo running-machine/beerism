@@ -57,21 +57,22 @@ tools:context=".MainActivity">
             android:clipToPadding="false">
 
         </androidx.viewpager.widget.ViewPager>
+
         <com.github.clans.fab.FloatingActionMenu
             android:id="@+id/arc_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|bottom"
+            app:menu_icon="@drawable/fab_add"
             app:menu_colorNormal="@color/ReplyOrange"
             app:menu_colorPressed="@color/ReplyOrange"
-            app:menu_colorRipple="@color/ReplyOrange"
-            >
+            app:menu_colorRipple="@color/ReplyOrange">
 
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/fab1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src ="@drawable/photo_camera"
+                android:src="@drawable/photo_camera"
                 app:fab_colorNormal="@color/ReplyOrange"
                 app:fab_label="item_detection" />
 
@@ -81,7 +82,7 @@ tools:context=".MainActivity">
                 android:layout_height="wrap_content"
                 android:src="@drawable/magnifying_glass"
                 app:fab_colorNormal="@color/ReplyOrange"
-                app:fab_label="search"/>
+                app:fab_label="search" />
 
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/fab3"
@@ -89,7 +90,7 @@ tools:context=".MainActivity">
                 android:layout_height="wrap_content"
                 android:src="@drawable/quality"
                 app:fab_colorNormal="@color/ReplyOrange"
-                app:fab_label="Recommendation"/>
+                app:fab_label="Recommendation" />
 
 
         </com.github.clans.fab.FloatingActionMenu>

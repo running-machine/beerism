@@ -12,6 +12,9 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    aaptOptions {
+        noCompress "tflite"  // Your model's file extension: "tflite", "lite", etc.
+    }
 
     buildTypes {
         release {
@@ -55,6 +58,5 @@ dependencies {
     implementation 'com.github.clans:fab:1.6.4'
     implementation 'com.rom4ek:arcnavigationview:1.0.3'
     implementation 'com.tomer:fadingtextview:2.5'
-
 }
 apply plugin: 'com.google.gms.google-services'

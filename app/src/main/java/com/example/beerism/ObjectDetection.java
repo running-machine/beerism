@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Path;
 import android.media.Image;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
@@ -16,10 +18,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
 
+import com.google.android.gms.common.Feature;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -36,13 +40,18 @@ import com.google.firebase.ml.custom.FirebaseModelOptions;
 import com.google.firebase.ml.custom.FirebaseModelOutputs;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata;
+import com.google.protobuf.ByteString;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -80,8 +89,9 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
      */
     private static final int DIM_BATCH_SIZE = 1;
     private static final int DIM_PIXEL_SIZE = 3;
-    private static final int DIM_IMG_SIZE_X = 224;
-    private static final int DIM_IMG_SIZE_Y = 224;
+    private static final int DIM_IMG_SIZE_X = 512;
+    private static final int DIM_IMG_SIZE_Y = 512;
+
     private final PriorityQueue<Map.Entry<String, Float>> sortedLabels =
             new PriorityQueue<>(
                     RESULTS_TO_SHOW,
@@ -92,8 +102,11 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
                             return (o1.getValue()).compareTo(o2.getValue());
                         }
                     });
+
     /* Preallocated buffers for storing image data. */
+
     private final int[] intValues = new int[DIM_IMG_SIZE_X * DIM_IMG_SIZE_Y];
+
     private ImageView mImageView;
     private ImageButton mRunCustomModelButton;
     private Bitmap mSelectedImage;
@@ -142,7 +155,6 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
 //        mGraphicOverlay = findViewById(R.id.graphic_overlay);
 
 
-
 //        mRunCustomModelButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -167,8 +179,8 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
         try {
             mDataOptions =
                     new FirebaseModelInputOutputOptions.Builder()
-                            .setInputFormat(0, FirebaseModelDataType.BYTE, inputDims)
-                            .setOutputFormat(0, FirebaseModelDataType.BYTE, outputDims)
+                            .setInputFormat(0, FirebaseModelDataType.INT32, inputDims)
+                            .setOutputFormat(0, FirebaseModelDataType.FLOAT32, outputDims)
                             .build();
 
             FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions
@@ -176,7 +188,7 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
                     .requireWifi()
                     .build();
 
-            FirebaseRemoteModel RemoteModel= new FirebaseRemoteModel.Builder(HOSTED_MODEL_NAME)
+            FirebaseRemoteModel RemoteModel = new FirebaseRemoteModel.Builder(HOSTED_MODEL_NAME)
                     .enableModelUpdates(true)
                     .setInitialDownloadConditions(conditions)
                     .setUpdatesDownloadConditions(conditions)
@@ -231,8 +243,8 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
                             new Continuation<FirebaseModelOutputs, List<String>>() {
                                 @Override
                                 public List<String> then(Task<FirebaseModelOutputs> task) {
-                                    byte[][] labelProbArray = task.getResult()
-                                            .<byte[][]>getOutput(0);
+                                    int[][] labelProbArray = task.getResult()
+                                            .<int[][]>getOutput(0);
                                     List<String> topLabels = getTopLabels(labelProbArray);
                                     mGraphicOverlay.clear();
                                     GraphicOverlay.Graphic labelGraphic = new LabelGraphic
@@ -251,10 +263,10 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
     /**
      * Gets the top label.txt in the results.
      */
-    private synchronized List<String> getTopLabels(byte[][] labelProbArray) {
+    private synchronized List<String> getTopLabels(int[][] labelProbArray) {
         for (int i = 0; i < mLabelList.size(); ++i) {
             sortedLabels.add(
-                    new AbstractMap.SimpleEntry<>(mLabelList.get(i), (labelProbArray[0][i] &
+                    new AbstractMap.SimpleEntry<>(mLabelList.get(i),(labelProbArray[0][i] &
                             0xff) / 255.0f));
             if (sortedLabels.size() > RESULTS_TO_SHOW) {
                 sortedLabels.poll();
@@ -413,10 +425,10 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
     }
 
     // 파이어베이스비전 이미지를 호출하기전 위치 변환
-    private class YourAnalyzer implements ImageAnalysis.Analyzer{
+    private class YourAnalyzer implements ImageAnalysis.Analyzer {
 
-        private int degreesToFirebaseRotation(int degrees){
-            switch (degrees){
+        private int degreesToFirebaseRotation(int degrees) {
+            switch (degrees) {
                 case 0:
                     return FirebaseVisionImageMetadata.ROTATION_0;
                 case 90:
@@ -425,21 +437,22 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
                     return FirebaseVisionImageMetadata.ROTATION_180;
                 case 270:
                     return FirebaseVisionImageMetadata.ROTATION_270;
-                    default:
-                        throw new IllegalArgumentException("각도는 0,90,180,270도 만 가능합니다.");
+                default:
+                    throw new IllegalArgumentException("각도는 0,90,180,270도 만 가능합니다.");
             }
         }
 
         @Override
         public void analyze(ImageProxy image, int rotationDegrees) {
-            if(image == null|| image.getImage()==null){
+            if (image == null || image.getImage() == null) {
                 return;
             }
             Image image1 = image.getImage();
             int rotation = degreesToFirebaseRotation(rotationDegrees);
-            FirebaseVisionImage image2 = FirebaseVisionImage.fromMediaImage(image1,rotation);
+            FirebaseVisionImage image2 = FirebaseVisionImage.fromMediaImage(image1, rotation);
         }
     }
+
 
 }
 
