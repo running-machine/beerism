@@ -24,7 +24,6 @@ import com.example.beerism.R;
 
 import java.util.Objects;
 
-
 public class Login extends AppCompatActivity {
     public static final String TAG = Login.class.getSimpleName();
 
@@ -99,4 +98,3 @@ public class Login extends AppCompatActivity {
         });
     }
 }
-

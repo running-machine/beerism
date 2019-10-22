@@ -10,7 +10,6 @@ public class BeerVO {
     private String homepage;
     private String ad;
 
-
     public BeerVO(String beer_image, String name_ko, String name_en, String alc, String category, String country, String homepage, String ad) {
         this.beer_image = beer_image;
         this.name_ko = name_ko;

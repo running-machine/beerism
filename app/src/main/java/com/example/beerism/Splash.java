@@ -18,7 +18,6 @@ import com.bumptech.glide.request.target.Target;
 import com.example.beerism.Login.Login;
 
 public class Splash extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +25,7 @@ public class Splash extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash);
 
+        // gif 로딩 시작
         ImageView rabbit = (ImageView) findViewById(R.id.gif_image);
         GlideDrawableImageViewTarget gifImage = new GlideDrawableImageViewTarget(rabbit);
         Glide.with(this).load(R.drawable.splash).listener(new RequestListener<Integer, GlideDrawable>() {
@@ -41,7 +41,7 @@ public class Splash extends AppCompatActivity {
                 if (resource instanceof GifDrawable) {
                     gifDrawable = (GifDrawable) resource;
 
-                    int duration = 0;
+                    int duration = 0; // gif 로딩 완료 시간을 기준으로 다음 화면으로 넘어가기 위한 변수
                     GifDecoder decoder = gifDrawable.getDecoder();
                     for (int i = 0; i < gifDrawable.getFrameCount(); i++) {
                         duration += decoder.getDelay(i);
@@ -53,7 +53,7 @@ public class Splash extends AppCompatActivity {
                             startActivity(new Intent(getApplication(), Login.class));
                             Splash.this.finish();
                         }
-                    }, duration -9000);
+                    }, duration - 9000);
 
                 }
 
@@ -61,12 +61,12 @@ public class Splash extends AppCompatActivity {
             }
         }).into(gifImage);
 
+        // gif 로딩에 관계없이 특정 시간만 스플래쉬 할 경우 사용
 //        Handler hd = new Handler();
-//        hd.postDelayed(new splashhandler(), 5000); // 1초 후에 hd handler 실행  3000ms = 3초
-
+//        hd.postDelayed(new splashhandler(), 5000); // 5초 후에 hd handler 실행  3000ms = 3초
     }
 
-    private class splashhandler implements Runnable{
+    private class SplashHandler implements Runnable {
         public void run(){
             startActivity(new Intent(getApplicationContext(), Login.class)); //로딩이 끝난 후, ChoiceFunction 이동
             Splash.this.finish(); // 로딩페이지 Activity stack에서 제거
@@ -77,7 +77,4 @@ public class Splash extends AppCompatActivity {
     public void onBackPressed() {
         //초반 플래시 화면에서 넘어갈때 뒤로가기 버튼 못누르게 함
     }
-
-
-
 }

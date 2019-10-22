@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             >
             <Button
-                android:id="@+id/choice_bt"
+                android:id="@+id/take_photo_bt"
                 android:layout_width="80dp"
                 android:layout_height="30dp"
                 android:background="@color/ReplyOrange"
@@ -52,7 +52,7 @@
                     android:layout_height="wrap_content">
 
                     <Button
-                        android:id="@+id/take_photo_bt"
+                        android:id="@+id/choice_bt"
                         android:layout_width="80dp"
                         android:layout_height="30dp"
                         android:layout_margin="10dp"

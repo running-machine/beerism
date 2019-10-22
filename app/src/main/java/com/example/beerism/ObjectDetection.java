@@ -1,3 +1,16 @@
+// Copyright 2018 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.example.beerism;
 
 import android.app.Activity;
@@ -54,21 +67,6 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 public class ObjectDetection extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    // Copyright 2018 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-
     private static final String TAG = "ObjectDetection";
     // 서버에 있는 모델
     private static final String HOSTED_MODEL_NAME = "beer-deteter";
@@ -86,7 +84,7 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
     private static final int DIM_PIXEL_SIZE = 3;
     private static final int DIM_IMG_SIZE_X = 512;
     private static final int DIM_IMG_SIZE_Y = 512;
-
+    // Float32 형으로 이미지 탐지 결과를 받았을 때 올바른 Label을 추출하기 위한 객체
     private final PriorityQueue<Map.Entry<String, Float>> sortedLabels =
             new PriorityQueue<>(
                     RESULTS_TO_SHOW,
@@ -99,13 +97,13 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
                     });
 
     /* Preallocated buffers for storing image data. */
-
+    // 이미지 탐지를 위해 bitmap을 재조정할 때 사용할 크기
     private final int[] intValues = new int[DIM_IMG_SIZE_X * DIM_IMG_SIZE_Y ];
 
-    private ImageView mImageView;
-    private ImageButton mRunCustomModelButton;
-    private Bitmap mSelectedImage;
-    private GraphicOverlay mGraphicOverlay;
+    private ImageView mImageView; // 사용자에게 보이는 이미지
+    private ImageButton mRunCustomModelButton; // 탐지를 시작하는 버튼
+    private Bitmap mSelectedImage; // image detection에 사용되는 bitmap 객체
+    private GraphicOverlay mGraphicOverlay; // image detection 결과를 보여주는 graphic 객체
     // Max width (portrait mode)
     private Integer mImageMaxWidth;
     // Max height (portrait mode)
@@ -123,6 +121,12 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
      */
     private FirebaseModelInputOutputOptions mDataOptions;
 
+    /**
+     * 특정 위치의 그림을 bitmap 객체로 반환하는 메소드
+     * @param context
+     * @param filePath
+     * @return
+     */
     public static Bitmap getBitmapFromAsset(Context context, String filePath) {
         AssetManager assetManager = context.getAssets();
 
@@ -153,14 +157,6 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
         mSelectedImage = convertUriToBitmap(receivedUri);
         mImageView.setImageBitmap(mSelectedImage);
 
-
-//        mRunCustomModelButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                runModelInference();
-//            }
-//        });
-
         initCustomModel();
         mRunCustomModelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,17 +179,20 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
         int[] inputDims = {DIM_BATCH_SIZE, DIM_IMG_SIZE_X, DIM_IMG_SIZE_Y, DIM_PIXEL_SIZE};
         int[] outputDims = {DIM_BATCH_SIZE, mLabelList.size()};
         try {
+            // 이미지 탐지 전 어떤 크기로 탐지를 할지 정의
             mDataOptions =
                     new FirebaseModelInputOutputOptions.Builder()
                             .setInputFormat(0, FirebaseModelDataType.INT32, new int[]{1,512,512,3})
                             .setOutputFormat(0, FirebaseModelDataType.FLOAT32,new int[]{1,20,4})
                             .build();
 
+            // 모델 불러오는 순서 : FirebaseModelDownloadConditions로 초기 설정 ->
+            //      remotemodel과 localmodel을 manager와 model option에 등록 ->
+            //      model option을 interpreter에 등록 후 탐지 전에 interpreter를 통해 탐지
             FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions
                     .Builder()
                     .requireWifi()
                     .build();
-
 
             FirebaseRemoteModel remoteModel = new FirebaseRemoteModel.Builder(HOSTED_MODEL_NAME)
                     .enableModelUpdates(true)
@@ -233,7 +232,6 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
                     .setOutputFormat(0, FirebaseModelDataType.INT32, outputDims)
                     .build();
 
-
             mInterpreter = FirebaseModelInterpreter.getInstance(modelOptions);
         } catch (FirebaseMLException e) {
             showToast("모델 셋팅 오류");
@@ -252,10 +250,10 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
         ByteBuffer imgData = convertBitmapToByteBuffer(mSelectedImage);
 //        ByteBuffer imgData2 = convertBitmapToByteBuffer2(mSelectedImage);
 //        float[][][][] input = convertBitmapToInputArray(mSelectedImage);
+
         try {
-//
+            // interpreter를 실행하기 위해 필요한 입력(특정 자료형으로 변환된 image)
             FirebaseModelInputs inputs = new FirebaseModelInputs.Builder().add(imgData).build();
-//
 
             // Here's where the magic happens!!
             Log.v(TAG, "분석 시작");
@@ -282,25 +280,27 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
                             List<String> topLabels = null;
                             try {
                                 Log.v(TAG, "데이터 추출 시작");
-                               byte[][][] label = task.getResult().getOutput(0);
+                                byte[][][] label = task.getResult().getOutput(0);
 
-//                                byte[][] labelProbArray = task.getResult().<byte[][]>getOutput(0);// 오류뜸
+//                                byte[][] labelProbArray = task.getResult().<byte[][]>getOutput(0); // 오류뜸
 //                                FirebaseModelOutputs result = task.getResult();
 //                                float output = result.getOutput(0);
 //                                float[][] output = result.getOutput(0);
-
-                                Log.v(TAG, "데이터 추출 완료");
-
+//
+//                                Log.v(TAG, "데이터 추출 완료");
+//
 //                                topLabels = getTopLabels(output);
 //                                Log.v(TAG, "라벨 구하기 완료");
+//
+//                                탐지된 객체 overlay 표시
 //                                mGraphicOverlay.clear();
 //                                GraphicOverlay.Graphic labelGraphic = new LabelGraphic(mGraphicOverlay, topLabels);
 //                                mGraphicOverlay.add(labelGraphic);
+//
 //                                Log.v(TAG, "오버레이 표시 완료");
 //                                for (String label : topLabels) {
 //                                    Log.v(TAG, label);
 //                                }
-
                                 Log.v(TAG, "분석 완료");
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -313,14 +313,13 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
             e.printStackTrace();
             showToast("모델 실행중 오류 발생");
         }
-
     }
-
 
     /**
      * Gets the top label.txt in the results.
      */
     private synchronized List<String> getTopLabels(int[][] labelProbArray) {
+        // label 정렬
         for (int i = 0; i < mLabelList.size(); ++i) {
             sortedLabels.add(
                     new AbstractMap.SimpleEntry<>(mLabelList.get(i), (labelProbArray[0][i] &
@@ -329,13 +328,17 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
                 sortedLabels.poll();
             }
         }
+
+        // 나온 점수에 따라 점수와 label를 정리
         List<String> result = new ArrayList<>();
         final int size = sortedLabels.size();
         for (int i = 0; i < size; ++i) {
             Map.Entry<String, Float> label = sortedLabels.poll();
             result.add(label.getKey() + ":" + label.getValue());
         }
+
         Log.d(TAG, "label.txt: " + result.toString());
+
         return result;
     }
 
@@ -355,6 +358,11 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
         return labelList;
     }
 
+    /**
+     * bitmap을 tensor FLOAT32 형과 맞추기 위해 4차원 float 배열로 변환하는 메소드
+     * @param bitmap
+     * @return
+     */
     private float[][][][] convertBitmapToInputArray(Bitmap bitmap) {
         // [START mlkit_bitmap_input]
 
@@ -402,11 +410,18 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
         return imgData;
     }
 
+    /**
+     * bitmap을 tensor Byte 형과 맞추기 위해 ByteBuffer로 변환하는데 float 형태로 저장하는 메소드
+     * @param bitmap
+     * @return
+     */
     private ByteBuffer convertBitmapToByteBuffer2(Bitmap bitmap) {
+        // float 형태로 저장 되므로 4(float 형의 크기)가 곱해짐
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(DIM_BATCH_SIZE * DIM_IMG_SIZE_X * DIM_IMG_SIZE_Y * DIM_PIXEL_SIZE * 4);
         byteBuffer.order(ByteOrder.nativeOrder());
         Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, DIM_IMG_SIZE_X, DIM_IMG_SIZE_Y, true);
         bitmap.getPixels(intValues, 0, scaledBitmap.getWidth(), 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight());
+
         int pixel = 0;
         final int IMAGE_MEAN = 128;
         final float IMAGE_STD = 128f;
@@ -418,6 +433,7 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
                 byteBuffer.putFloat((((val) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
             }
         }
+
         return byteBuffer;
     }
 
@@ -461,8 +477,10 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
         int targetHeight;
         int maxWidthForPortraitMode = getImageMaxWidth();
         int maxHeightForPortraitMode = getImageMaxHeight();
+
         targetWidth = maxWidthForPortraitMode;
         targetHeight = maxHeightForPortraitMode;
+
         return new Pair<>(targetWidth, targetHeight);
     }
 
@@ -519,10 +537,18 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
         // Do nothing
     }
 
+    /**
+     * 입력 받는 Uri를 Bitmap으로 변환하는 메소드
+     * 다른 화면에서 카메라 촬영이나 앨범 선택으로 이미지를 넘겨받을 때 Uri로 넘기 받기 때문에 사용
+     * @param uri
+     * @return
+     */
     private Bitmap convertUriToBitmap(Uri uri) {
         Bitmap image = null;
+
         try {
             InputStream image_stream;
+
             try {
                 image_stream = this.getContentResolver().openInputStream(uri);
                 image = BitmapFactory.decodeStream(image_stream);
@@ -538,7 +564,6 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
 
     // 파이어베이스비전 이미지를 호출하기전 위치 변환
     private class YourAnalyzer implements ImageAnalysis.Analyzer {
-
         private int degreesToFirebaseRotation(int degrees) {
             switch (degrees) {
                 case 0:
@@ -551,25 +576,19 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
                     return FirebaseVisionImageMetadata.ROTATION_270;
                 default:
                     throw new IllegalArgumentException("각도는 0,90,180,270도 만 가능합니다.");
-
             }
         }
 
         @Override
-
         public void analyze(ImageProxy image, int rotationDegrees) {
             if (image == null || image.getImage() == null) {
                 return;
             }
+
             Image mediaImage = image.getImage();
             int rotation = degreesToFirebaseRotation(rotationDegrees);
 
-
             FirebaseVisionImage image3 = FirebaseVisionImage.fromMediaImage(mediaImage, rotation);
-
         }
     }
-
-
 }
-

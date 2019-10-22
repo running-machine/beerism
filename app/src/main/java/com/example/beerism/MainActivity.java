@@ -1,6 +1,5 @@
 package com.example.beerism;
 
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -52,25 +51,21 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.io.File;
 import java.io.IOException;
 
-//import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-
 public class MainActivity extends AppCompatActivity {
     NavigationTabStrip main_nts;
     ViewPager main_vp;
-    private FloatingActionButton DAFab;
+
     private static final int FROM_CAMERA = 0;
     private static final int FROM_ALBUM = 1;
     FloatingActionButton DetectionFab , ListFab;
+
+    private AlertDialog alert;
+
 //    FloatingActionMenu arcLayout;
-    View centerItem;
-    // 데이터베이스 객체 인스턴스 생성
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-    private ImageView img1;
+
     private Uri imgUri, photoURI, albumURI;
     private String mCurrentPhotoPath;
     FirebaseAuth auth;
-    private TextView welcomText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
         auth = FirebaseAuth.getInstance();
+
         // 앱 최초 실행 여부 //
         SharedPreferences pref = getSharedPreferences("isFirst", Activity.MODE_PRIVATE);
 
@@ -98,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
                     .hideOnTouchOutside()
                     .build();
         }
+
         ListFab = findViewById(R.id.fab2);
         DetectionFab = findViewById(R.id.fab1);
         main_nts = findViewById(R.id.nts_top);
@@ -118,10 +115,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        initDialog(); // DetectionFab에 click 메소드를 할당하기 전에 dialog 초기화
         DetectionFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                makeDialog();
+                alert.show();
             }
         });
     }
@@ -133,23 +131,22 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        // 뒤로가기 버튼 누를시 navigation바 없에는 부분
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
-        //뒤로가기 버튼 누를시 navigation바 없에는 부분
     }
 
     private void InitializeLayout() {
-
         //toolBar를 통해 App Bar 생성
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setLogo(R.drawable.main_logo);
 
-        //App Bar의 좌측 영영에 Drawer를 Open 하기 위한 Incon 추가
+        //App Bar의 좌측 영영에 Drawer를 Open 하기 위한 Icon 추가
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.list_menu);
 
@@ -182,82 +179,72 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
     }
-
 
 //    private void makeDialog() {
 //        AlertDialog.Builder alt_bld = new AlertDialog.Builder(MainActivity.this, R.style.Alert);
 //        alt_bld.setTitle("사진 업로드").setIcon(R.drawable.object_detection).setCancelable(
-//                false).setPositiveButton("사진촬영",
-//                new DialogInterface.OnClickListener() {
-//
+//                false).setPositiveButton("사진촬영", new DialogInterface.OnClickListener() {
 //                    public void onClick(DialogInterface dialog, int id) {
 //                        // 사진 촬영 클릭
 //                        Log.v("알림", "다이얼로그 > 사진촬영 선택");
 //                        takePhoto();
 //                    }
-//
-//                }).setNeutralButton("앨범선택",
-//                new DialogInterface.OnClickListener() {
-//
+//                }).setNeutralButton("앨범선택", new DialogInterface.OnClickListener() {
 //                    public void onClick(DialogInterface dialogInterface, int id) {
 //                        Log.v("알림", "다이얼로그 > 앨범선택 선택");
 //                        //앨범에서 선택
 //                        selectAlbum();
 //                    }
-//
-//                }).setNegativeButton("취소   ",
-//                new DialogInterface.OnClickListener() {
-//
+//                }).setNegativeButton("취소   ", new DialogInterface.OnClickListener() {
 //                    public void onClick(DialogInterface dialog, int id) {
 //                        Log.v("알림", "다이얼로그 > 취소 선택");
-//                        // 취소 클릭. dialog 닫기.
 //                        dialog.cancel();
 //                    }
-//
 //                });
 //        AlertDialog alert = alt_bld.create();
 //        alert.show();
 //    }
-private void makeDialog() {
-    final AlertDialog.Builder alt_bld = new AlertDialog.Builder(MainActivity.this);
-    LayoutInflater inflater = getLayoutInflater();
-    View view = inflater.inflate(R.layout.dialog_detection, null);
-    alt_bld.setView(view);
-    final Button choice = (Button) view.findViewById(R.id.choice_bt);
-    final Button take_ph = (Button) view.findViewById(R.id.take_photo_bt);
-    final Button close = (Button) view.findViewById(R.id.cancel_bt);
 
-    final AlertDialog dialog = alt_bld.create();
-    close.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            dialog.cancel();
-        }
-    });
-    AlertDialog alert = alt_bld.create();
-    alert.show();
-    choice.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            takePhoto();
-        }
-    });
-    take_ph.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            selectAlbum();
-        }
-    });
+    private void initDialog() {
+        AlertDialog.Builder alt_bld = new AlertDialog.Builder(MainActivity.this);
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_detection, null);
 
-}
+        final Button take_ph = (Button) view.findViewById(R.id.take_photo_bt);
+        final Button choice = (Button) view.findViewById(R.id.choice_bt);
+        final Button close = (Button) view.findViewById(R.id.cancel_bt);
 
-    //사진 찍기 클릭
+        alt_bld.setView(view);
+        alert = alt_bld.create();
+
+        take_ph.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                takePhoto();
+            }
+        });
+        choice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectAlbum();
+            }
+        });
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alert.cancel();
+            }
+        });
+    }
+
+    /**
+     * 사진 촬영 후 해당 파일을 임시적으로 저장하는 메소드
+     */
     public void takePhoto() {
         // 촬영 후 이미지 가져옴
         String state = Environment.getExternalStorageState();
-        //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
         // 사진 촬영 권한 확인
         int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA);
         if (permissionCheck == PackageManager.PERMISSION_DENIED) {
@@ -273,9 +260,11 @@ private void makeDialog() {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
                 if (photoFile != null) {
                     Uri providerURI = FileProvider.getUriForFile(this, "com.example.beerism.fileprovider", photoFile);
                     imgUri = providerURI;
+                    // 찍은 사진을 onActivityResult 메소드에 넘김
                     intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, providerURI);
                     startActivityForResult(intent, FROM_CAMERA);
                 }
@@ -286,24 +275,30 @@ private void makeDialog() {
         }
     }
 
-
+    /**
+     * 임시적으로 생긴 파일의 경로를 mCurrentPhotoPath에 넣고 반환하는 메소드
+     * @return
+     * @throws IOException
+     */
     public File createImageFile() throws IOException {
         String imgFileName = System.currentTimeMillis() + ".jpg";
         File imageFile = null;
         File storageDir = new File(Environment.getExternalStorageDirectory() + "/Pictures", "file");
+        // 이미지 파일 경로가 없으면 생성
         if (!storageDir.exists()) {
             Log.v("알림", "storageDir 존재 x " + storageDir.toString());
             storageDir.mkdirs();
         }
+
         Log.v("알림", "storageDir 존재함 " + storageDir.toString());
+
         imageFile = new File(storageDir, imgFileName);
         mCurrentPhotoPath = imageFile.getAbsolutePath();
+
         return imageFile;
     }
 
-    //앨범 선택 클릭
     public void selectAlbum() {
-        //앨범에서 이미지 가져옴
         //앨범 열기
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
@@ -311,7 +306,9 @@ private void makeDialog() {
         startActivityForResult(intent, FROM_ALBUM);
     }
 
-
+    /**
+     * mCurrentPhotoPath의 임시 파일을 저장
+     */
     public void galleryAddPic() {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(mCurrentPhotoPath);
@@ -321,26 +318,22 @@ private void makeDialog() {
         Toast.makeText(this, "사진이 저장되었습니다", Toast.LENGTH_SHORT).show();
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) {
             return;
         }
+
         switch (requestCode) {
             case FROM_ALBUM: {
-                //앨범에서 가져오기
                 if (data.getData() != null) {
                     try {
-                        File albumFile = null;
-
-                        albumFile = createImageFile();
+                        File albumFile = createImageFile();
 
                         photoURI = data.getData();
                         albumURI = Uri.fromFile(albumFile);
                         galleryAddPic();
-//                        img1.setImageURI(photoURI);
                         //cropImage();
 
                         Intent intent = new Intent(getApplicationContext(), ObjectDetection.class);
@@ -353,14 +346,12 @@ private void makeDialog() {
                 }
                 break;
             }
-
             case FROM_CAMERA: {
-                //카메라 촬영
                 try {
-                    Log.v("알림", "FROM_CAMERA 처리");
                     galleryAddPic();
-                    img1.setImageURI(imgUri);
 
+                    // 카메라 촬영 후 이미지가 제대로 나오도록 회전 후
+                    // 해당 Uri(변수 imgUri)를 ObjectDetection의 intent로 전달
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -369,14 +360,12 @@ private void makeDialog() {
         }
     }
 
-
     public static class MyPagerAdapter extends FragmentPagerAdapter {
         private static int NUM_ITEMS = 3;
 
         public MyPagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
         }
-
 
         // Returns total number of pages
         @Override
@@ -404,6 +393,4 @@ private void makeDialog() {
         }
 
     }
-
-
 }

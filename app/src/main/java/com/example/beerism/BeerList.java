@@ -1,7 +1,11 @@
 package com.example.beerism;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,7 +27,10 @@ public class BeerList extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
+    private ArrayList<BeerVO> beerVOAllArrayList;
     private ArrayList<BeerVO> beerVOArrayList;
+
+    private EditText searchTxt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +43,36 @@ public class BeerList extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        searchTxt = findViewById(R.id.search_txt);
+        beerVOAllArrayList = new ArrayList<>();
         beerVOArrayList = new ArrayList<>();
 
+        initBeerList();
+
+        adapter = new BeerAdapter(beerVOArrayList,this);
+        recyclerView.setAdapter(adapter);
+
+        searchTxt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                updateBeerList(charSequence.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        updateBeerList("");
+    }
+
+    private void initBeerList() {
         //파이어베이스 데이터 가져오기
         firebaseFirestore.collection("beer").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -46,12 +81,10 @@ public class BeerList extends AppCompatActivity {
                     Log.w("파이어베이스 DB", "로드 실패", e);
                     return;
                 }
-                int count = queryDocumentSnapshots.size();
-                beerVOArrayList.clear();//일딴 초기화 해줘야 한다. 안 그럼 기존 데이터에 반복해서 뒤에 추가된다.
 
                 for (QueryDocumentSnapshot documentSnapshots : queryDocumentSnapshots) {
-                    if (documentSnapshots.get("name_en") != null){
-                        beerVOArrayList.add(0,new BeerVO(
+                    if (documentSnapshots.get("name_en") != null) {
+                        beerVOAllArrayList.add(0, new BeerVO(
                                 documentSnapshots.getString("img"),
                                 documentSnapshots.getString("name_ko"),
                                 documentSnapshots.getString("name_en"),
@@ -60,15 +93,31 @@ public class BeerList extends AppCompatActivity {
                                 documentSnapshots.getString("country"),
                                 documentSnapshots.getString("homepage"),
                                 documentSnapshots.getString("ad")
-                                ));
+                        ));
                     }
                 }
+
+                beerVOArrayList.addAll(beerVOAllArrayList);
+
                 adapter.notifyDataSetChanged();
             }
         });
+    }
 
-        adapter = new BeerAdapter(beerVOArrayList,this);
-        recyclerView.setAdapter(adapter);
+    private void updateBeerList(String search) {
+        final String searchStr = search.toLowerCase();
 
+        beerVOArrayList.clear();
+        for (BeerVO beer : beerVOAllArrayList) {
+            String korean = beer.getName_ko().toLowerCase();
+            String english = beer.getName_en().toLowerCase();
+            String category = beer.getCategory().toLowerCase();
+            String country = beer.getCountry().toLowerCase();
+            if (korean.contains(searchStr) || english.contains(searchStr) || category.contains(searchStr) || country.contains(searchStr)) {
+                beerVOArrayList.add(beer);
+            }
+        }
+
+        adapter.notifyDataSetChanged();
     }
 }

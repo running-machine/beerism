@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Objects;
 
 public class UserImpl implements MemberRepository {
-
     private static final String TAG = UserImpl.class.getSimpleName();
     private Context context;
     private FirebaseFirestore firebaseFirestore;
