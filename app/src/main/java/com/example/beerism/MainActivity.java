@@ -11,9 +11,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -180,40 +182,72 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void makeDialog() {
-        AlertDialog.Builder alt_bld = new AlertDialog.Builder(MainActivity.this, R.style.Alert);
-        alt_bld.setTitle("사진 업로드").setIcon(R.drawable.object_detection).setCancelable(
-                false).setPositiveButton("사진촬영",
-                new DialogInterface.OnClickListener() {
+//    private void makeDialog() {
+//        AlertDialog.Builder alt_bld = new AlertDialog.Builder(MainActivity.this, R.style.Alert);
+//        alt_bld.setTitle("사진 업로드").setIcon(R.drawable.object_detection).setCancelable(
+//                false).setPositiveButton("사진촬영",
+//                new DialogInterface.OnClickListener() {
+//
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        // 사진 촬영 클릭
+//                        Log.v("알림", "다이얼로그 > 사진촬영 선택");
+//                        takePhoto();
+//                    }
+//
+//                }).setNeutralButton("앨범선택",
+//                new DialogInterface.OnClickListener() {
+//
+//                    public void onClick(DialogInterface dialogInterface, int id) {
+//                        Log.v("알림", "다이얼로그 > 앨범선택 선택");
+//                        //앨범에서 선택
+//                        selectAlbum();
+//                    }
+//
+//                }).setNegativeButton("취소   ",
+//                new DialogInterface.OnClickListener() {
+//
+//                    public void onClick(DialogInterface dialog, int id) {
+//                        Log.v("알림", "다이얼로그 > 취소 선택");
+//                        // 취소 클릭. dialog 닫기.
+//                        dialog.cancel();
+//                    }
+//
+//                });
+//        AlertDialog alert = alt_bld.create();
+//        alert.show();
+//    }
+private void makeDialog() {
+    final AlertDialog.Builder alt_bld = new AlertDialog.Builder(MainActivity.this);
+    LayoutInflater inflater = getLayoutInflater();
+    View view = inflater.inflate(R.layout.dialog_detection, null);
+    alt_bld.setView(view);
+    final Button choice = (Button) view.findViewById(R.id.choice_bt);
+    final Button take_ph = (Button) view.findViewById(R.id.take_photo_bt);
+    final Button close = (Button) view.findViewById(R.id.cancel_bt);
 
-                    public void onClick(DialogInterface dialog, int id) {
-                        // 사진 촬영 클릭
-                        Log.v("알림", "다이얼로그 > 사진촬영 선택");
-                        takePhoto();
-                    }
+    final AlertDialog dialog = alt_bld.create();
+    close.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            dialog.cancel();
+        }
+    });
+    AlertDialog alert = alt_bld.create();
+    alert.show();
+    choice.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            takePhoto();
+        }
+    });
+    take_ph.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            selectAlbum();
+        }
+    });
 
-                }).setNeutralButton("앨범선택",
-                new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialogInterface, int id) {
-                        Log.v("알림", "다이얼로그 > 앨범선택 선택");
-                        //앨범에서 선택
-                        selectAlbum();
-                    }
-
-                }).setNegativeButton("취소   ",
-                new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int id) {
-                        Log.v("알림", "다이얼로그 > 취소 선택");
-                        // 취소 클릭. dialog 닫기.
-                        dialog.cancel();
-                    }
-
-                });
-        AlertDialog alert = alt_bld.create();
-        alert.show();
-    }
+}
 
     //사진 찍기 클릭
     public void takePhoto() {

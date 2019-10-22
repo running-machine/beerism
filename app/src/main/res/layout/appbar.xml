@@ -62,6 +62,7 @@ tools:context=".MainActivity">
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|bottom"
+            android:layout_margin="20dp"
             app:menu_colorNormal="@color/ReplyOrange"
             app:menu_colorPressed="@color/ReplyOrange"
             app:menu_colorRipple="@color/ReplyOrange"
