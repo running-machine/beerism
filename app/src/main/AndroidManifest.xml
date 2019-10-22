@@ -19,12 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Login.Login">
-
-        </activity>
-        <activity android:name=".Login.SignUpActivity">
-
-        </activity>
+        <activity android:name=".search"></activity>
+        <activity android:name=".Login.Login"></activity>
+        <activity android:name=".Login.SignUpActivity"></activity>
 
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
