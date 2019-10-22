@@ -37,7 +37,7 @@ public class BeerAdapter extends RecyclerView.Adapter<BeerAdapter.BeerHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull BeerHolder holder, int position) {
-        Glide.with(holder.itemView)
+        Glide.with(context)
                 .load(beerVOArrayList.get(position).getBeer_image())
                 .into(holder.beerImage);
         holder.beerKo.setText(beerVOArrayList.get(position).getName_ko());

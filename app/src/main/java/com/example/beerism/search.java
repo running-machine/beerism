@@ -36,12 +36,12 @@ public class search extends AppCompatActivity {
         getIntentDate();
         recyclerView = findViewById(R.id.notice_search_recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new BeerAdapter(this,)
+//        adapter = new BeerAdapter(this,)
     }
 
     private void getIntentDate() {
         Intent intent =getIntent();
-        context = intent.getExtras().getSerializable(context.NO)
+//        context = intent.getExtras().getSerializable(context.NO)
 
     }
 }

@@ -206,20 +206,6 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
                     .setLocalModelName(LOCAL_MODEL_NAME)
                     .build();
 
-            manager.downloadRemoteModelIfNeeded(remoteModel)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.v(TAG, "모델 사용 가능");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.v(TAG, "모델 사용 불가능");
-                    }
-                });
-
             mDataOptions = new FirebaseModelInputOutputOptions.Builder()
                     .setInputFormat(0, FirebaseModelDataType.FLOAT32, inputDims)
                     .setOutputFormat(0, FirebaseModelDataType.INT32, outputDims)
