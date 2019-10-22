@@ -1,11 +1,13 @@
 package com.example.beerism;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -22,6 +24,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -220,6 +224,12 @@ public class MainActivity extends AppCompatActivity {
         // 촬영 후 이미지 가져옴
         String state = Environment.getExternalStorageState();
         //Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // 사진 촬영 권한 확인
+        int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA);
+        if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, 0); // 권한 허용 요구
+        }
+
         if (Environment.MEDIA_MOUNTED.equals(state)) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (intent.resolveActivity(getPackageManager()) != null) {
@@ -296,9 +306,12 @@ public class MainActivity extends AppCompatActivity {
                         photoURI = data.getData();
                         albumURI = Uri.fromFile(albumFile);
                         galleryAddPic();
-                        img1.setImageURI(photoURI);
+//                        img1.setImageURI(photoURI);
                         //cropImage();
 
+                        Intent intent = new Intent(getApplicationContext(), ObjectDetection.class);
+                        intent.putExtra("imageUri", photoURI);
+                        startActivity(intent);
                     } catch (Exception e) {
                         e.printStackTrace();
                         Log.v("알림", "앨범에서 가져오기 에러");

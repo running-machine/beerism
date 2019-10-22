@@ -1,12 +1,19 @@
 package com.example.beerism;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
 import android.graphics.Path;
 import android.media.Image;
+
+import android.graphics.Color;
+import android.media.Image;
+import android.net.Uri;
+
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +33,7 @@ import androidx.camera.core.ImageProxy;
 import com.google.android.gms.common.Feature;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.ml.common.FirebaseMLException;
 import com.google.firebase.ml.common.modeldownload.FirebaseLocalModel;
@@ -38,12 +46,19 @@ import com.google.firebase.ml.custom.FirebaseModelInputs;
 import com.google.firebase.ml.custom.FirebaseModelInterpreter;
 import com.google.firebase.ml.custom.FirebaseModelOptions;
 import com.google.firebase.ml.custom.FirebaseModelOutputs;
+import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata;
 import com.google.protobuf.ByteString;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+
+import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
+import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -80,6 +95,7 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
     private static final String HOSTED_MODEL_NAME = "beer-deteter";
     // 로컬에 있는 모델
     private static final String LOCAL_MODEL_ASSET = "model.tflite";
+    private static final String LOCAL_MODEL_NAME = "asset";//"beer_20191010105516";
     // assets 하위에 있는 정답(라벨 파일)
     private static final String LABEL_PATH = "label.txt";
     //인식 결과값 상한치
@@ -105,7 +121,7 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
 
     /* Preallocated buffers for storing image data. */
 
-    private final int[] intValues = new int[DIM_IMG_SIZE_X * DIM_IMG_SIZE_Y];
+    private final int[] intValues = new int[DIM_IMG_SIZE_X * DIM_IMG_SIZE_Y ];
 
     private ImageView mImageView;
     private ImageButton mRunCustomModelButton;
@@ -152,7 +168,11 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
 
         mRunCustomModelButton = findViewById(R.id.capture_button);
 
-//        mGraphicOverlay = findViewById(R.id.graphic_overlay);
+        mGraphicOverlay = findViewById(R.id.graphic_overlay);
+
+        Uri receivedUri = getIntent().getParcelableExtra("imageUri");
+        mSelectedImage = convertUriToBitmap(receivedUri);
+        mImageView.setImageBitmap(mSelectedImage);
 
 
 //        mRunCustomModelButton.setOnClickListener(new View.OnClickListener() {
@@ -161,6 +181,14 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
 //                runModelInference();
 //            }
 //        });
+
+        initCustomModel();
+        mRunCustomModelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                runModelInference();
+            }
+        });
 //        Spinner dropdown = findViewById(R.id.spinner);
 //        String[] items = new String[]{"Test Image 1 (Text)", "Test Image 2 (Text)", "Test Image 3" +
 //                " (Face)", "Test Image 4 (Object)", "Test Image 5 (Object)"};
@@ -168,7 +196,6 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
 //                .simple_spinner_dropdown_item, items);
 //        dropdown.setAdapter(adapter);
 //        dropdown.setOnItemSelectedListener(this);
-        initCustomModel();
     }
 
     private void initCustomModel() {
@@ -179,8 +206,8 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
         try {
             mDataOptions =
                     new FirebaseModelInputOutputOptions.Builder()
-                            .setInputFormat(0, FirebaseModelDataType.INT32, inputDims)
-                            .setOutputFormat(0, FirebaseModelDataType.FLOAT32, outputDims)
+                            .setInputFormat(0, FirebaseModelDataType.INT32, new int[]{1,512,512,3})
+                            .setOutputFormat(0, FirebaseModelDataType.FLOAT32,new int[]{1,20,4})
                             .build();
 
             FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions
@@ -188,26 +215,39 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
                     .requireWifi()
                     .build();
 
-            FirebaseRemoteModel RemoteModel = new FirebaseRemoteModel.Builder(HOSTED_MODEL_NAME)
+
+            FirebaseRemoteModel remoteModel = new FirebaseRemoteModel.Builder(HOSTED_MODEL_NAME)
                     .enableModelUpdates(true)
                     .setInitialDownloadConditions(conditions)
                     .setUpdatesDownloadConditions(conditions)
                     .build();
 
-            FirebaseLocalModel localModel =
-                    new FirebaseLocalModel.Builder("asset")
-                            .setAssetFilePath(LOCAL_MODEL_ASSET).build();
+            FirebaseLocalModel localModel = new FirebaseLocalModel.Builder(LOCAL_MODEL_NAME)
+                    .setAssetFilePath(LOCAL_MODEL_ASSET).build();
 
             FirebaseModelManager manager = FirebaseModelManager.getInstance();
-            manager.registerRemoteModel(RemoteModel);
+            manager.registerRemoteModel(remoteModel);
             manager.registerLocalModel(localModel);
-
 
             FirebaseModelOptions modelOptions =
                     new FirebaseModelOptions.Builder()
                             .setRemoteModelName(HOSTED_MODEL_NAME)
-                            .setLocalModelName("asset")
+                            .setLocalModelName(LOCAL_MODEL_NAME)
                             .build();
+
+//            manager.downloadRemoteModelIfNeeded(remoteModel)
+//                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        Log.v(TAG, "모델 사용 가능");
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Log.v(TAG, "모델 사용 불가능");
+//                    }
+//                });
 
 
             mInterpreter = FirebaseModelInterpreter.getInstance(modelOptions);
@@ -223,13 +263,18 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
             Log.e(TAG, "이미지 분류 초기화 실패");
             return;
         }
-        // Create input data.
-        ByteBuffer imgData = convertBitmapToByteBuffer(mSelectedImage, mSelectedImage.getWidth(),
-                mSelectedImage.getHeight());
 
+        // Create input data.
+        ByteBuffer imgData = convertBitmapToByteBuffer(mSelectedImage);
+//        ByteBuffer imgData2 = convertBitmapToByteBuffer2(mSelectedImage);
+//        float[][][][] input = convertBitmapToInputArray(mSelectedImage);
         try {
+//
             FirebaseModelInputs inputs = new FirebaseModelInputs.Builder().add(imgData).build();
+//
+
             // Here's where the magic happens!!
+            Log.v(TAG, "분석 시작");
             mInterpreter
                     .run(inputs, mDataOptions)
                     .addOnFailureListener(new OnFailureListener() {
@@ -239,20 +284,47 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
                             showToast("인식 오류");
                         }
                     })
-                    .continueWith(
-                            new Continuation<FirebaseModelOutputs, List<String>>() {
-                                @Override
-                                public List<String> then(Task<FirebaseModelOutputs> task) {
-                                    int[][] labelProbArray = task.getResult()
-                                            .<int[][]>getOutput(0);
-                                    List<String> topLabels = getTopLabels(labelProbArray);
-                                    mGraphicOverlay.clear();
-                                    GraphicOverlay.Graphic labelGraphic = new LabelGraphic
-                                            (mGraphicOverlay, topLabels);
-                                    mGraphicOverlay.add(labelGraphic);
-                                    return topLabels;
-                                }
-                            });
+//                    .addOnSuccessListener(new OnSuccessListener<FirebaseModelOutputs>() {
+//                        @Override
+//                        public void onSuccess(FirebaseModelOutputs firebaseModelOutputs) {
+//                            Log.v(TAG, "데이터 추출 시작");
+//                            firebaseModelOutputs.getOutput(0);
+//                            Log.v(TAG, "데이터 추출 완료");
+//                        }
+//                    });
+                    .continueWith(new Continuation<FirebaseModelOutputs, List<String>>() {
+                        @Override
+                        public List<String> then(Task<FirebaseModelOutputs> task) {
+                            List<String> topLabels = null;
+                            try {
+                                Log.v(TAG, "데이터 추출 시작");
+                               byte[][][] label = task.getResult().getOutput(0);
+
+//                                byte[][] labelProbArray = task.getResult().<byte[][]>getOutput(0);// 오류뜸
+//                                FirebaseModelOutputs result = task.getResult();
+//                                float output = result.getOutput(0);
+//                                float[][] output = result.getOutput(0);
+
+                                Log.v(TAG, "데이터 추출 완료");
+
+//                                topLabels = getTopLabels(output);
+//                                Log.v(TAG, "라벨 구하기 완료");
+//                                mGraphicOverlay.clear();
+//                                GraphicOverlay.Graphic labelGraphic = new LabelGraphic(mGraphicOverlay, topLabels);
+//                                mGraphicOverlay.add(labelGraphic);
+//                                Log.v(TAG, "오버레이 표시 완료");
+//                                for (String label : topLabels) {
+//                                    Log.v(TAG, label);
+//                                }
+
+                                Log.v(TAG, "분석 완료");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            return topLabels;
+                        }
+                    });
         } catch (FirebaseMLException e) {
             e.printStackTrace();
             showToast("모델 실행중 오류 발생");
@@ -260,13 +332,14 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
 
     }
 
+
     /**
      * Gets the top label.txt in the results.
      */
     private synchronized List<String> getTopLabels(int[][] labelProbArray) {
         for (int i = 0; i < mLabelList.size(); ++i) {
             sortedLabels.add(
-                    new AbstractMap.SimpleEntry<>(mLabelList.get(i),(labelProbArray[0][i] &
+                    new AbstractMap.SimpleEntry<>(mLabelList.get(i), (labelProbArray[0][i] &
                             0xff) / 255.0f));
             if (sortedLabels.size() > RESULTS_TO_SHOW) {
                 sortedLabels.poll();
@@ -298,35 +371,73 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
         return labelList;
     }
 
+    private float[][][][] convertBitmapToInputArray(Bitmap bitmap) {
+        // [START mlkit_bitmap_input]
+
+        bitmap = Bitmap.createScaledBitmap(bitmap, DIM_IMG_SIZE_X, DIM_IMG_SIZE_Y, true);
+
+        int batchNum = 0;
+        float[][][][] input = new float[DIM_BATCH_SIZE][DIM_IMG_SIZE_X][DIM_IMG_SIZE_Y][DIM_PIXEL_SIZE];
+        for (int x = 0; x < DIM_IMG_SIZE_X; x++) {
+            for (int y = 0; y < DIM_IMG_SIZE_Y; y++) {
+                int pixel = bitmap.getPixel(x, y);
+                // Normalize channel values to [-1.0, 1.0]. This requirement varies by
+                // model. For example, some models might require values to be normalized
+                // to the range [0.0, 1.0] instead.
+                input[batchNum][x][y][0] = (Color.red(pixel) - 127) / 128.0f;
+                input[batchNum][x][y][1] = (Color.green(pixel) - 127) / 128.0f;
+                input[batchNum][x][y][2] = (Color.blue(pixel) - 127) / 128.0f;
+            }
+        }
+        // [END mlkit_bitmap_input]
+
+        return input;
+    }
+
     /**
      * Writes Image data into a {@code ByteBuffer}.
      */
-    private synchronized ByteBuffer convertBitmapToByteBuffer(
-            Bitmap bitmap, int width, int height) {
-        ByteBuffer imgData =
-                ByteBuffer.allocateDirect(
-                        DIM_BATCH_SIZE * DIM_IMG_SIZE_X * DIM_IMG_SIZE_Y * DIM_PIXEL_SIZE);
+    private synchronized ByteBuffer convertBitmapToByteBuffer(Bitmap bitmap) {
+        ByteBuffer imgData = ByteBuffer.allocateDirect(4* DIM_BATCH_SIZE * DIM_IMG_SIZE_X * DIM_IMG_SIZE_Y * DIM_PIXEL_SIZE);
         imgData.order(ByteOrder.nativeOrder());
-        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, DIM_IMG_SIZE_X, DIM_IMG_SIZE_Y,
-                true);
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, DIM_IMG_SIZE_X, DIM_IMG_SIZE_Y, true);
         imgData.rewind();
         scaledBitmap.getPixels(intValues, 0, scaledBitmap.getWidth(), 0, 0,
                 scaledBitmap.getWidth(), scaledBitmap.getHeight());
+
         // Convert the image to int points.
         int pixel = 0;
         for (int i = 0; i < DIM_IMG_SIZE_X; ++i) {
             for (int j = 0; j < DIM_IMG_SIZE_Y; ++j) {
                 final int val = intValues[pixel++];
-                imgData.put((byte) ((val >> 16) & 0xFF));
-                imgData.put((byte) ((val >> 8) & 0xFF));
-                imgData.put((byte) (val & 0xFF));
+                imgData.putFloat((byte) ((val >> 16) & 0xFF));
+                imgData.putFloat((byte) ((val >> 8) & 0xFF));
+                imgData.putFloat((byte) (val & 0xFF));
             }
         }
         return imgData;
     }
 
-    // Functions for loading images from app assets.
+    private ByteBuffer convertBitmapToByteBuffer2(Bitmap bitmap) {
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(DIM_BATCH_SIZE * DIM_IMG_SIZE_X * DIM_IMG_SIZE_Y * DIM_PIXEL_SIZE * 4);
+        byteBuffer.order(ByteOrder.nativeOrder());
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, DIM_IMG_SIZE_X, DIM_IMG_SIZE_Y, true);
+        bitmap.getPixels(intValues, 0, scaledBitmap.getWidth(), 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight());
+        int pixel = 0;
+        final int IMAGE_MEAN = 128;
+        final float IMAGE_STD = 128f;
+        for (int i = 0; i < DIM_IMG_SIZE_X; ++i) {
+            for (int j = 0; j < DIM_IMG_SIZE_Y; ++j) {
+                final int val = intValues[pixel++];
+                byteBuffer.putFloat((((val >> 16) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+                byteBuffer.putFloat((((val >> 8) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+                byteBuffer.putFloat((((val) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+            }
+        }
+        return byteBuffer;
+    }
 
+    // Functions for loading images from app assets.
     private void showToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
@@ -424,6 +535,23 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
         // Do nothing
     }
 
+    private Bitmap convertUriToBitmap(Uri uri) {
+        Bitmap image = null;
+        try {
+            InputStream image_stream;
+            try {
+                image_stream = this.getContentResolver().openInputStream(uri);
+                image = BitmapFactory.decodeStream(image_stream);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return image;
+    }
+
     // 파이어베이스비전 이미지를 호출하기전 위치 변환
     private class YourAnalyzer implements ImageAnalysis.Analyzer {
 
@@ -439,17 +567,22 @@ public class ObjectDetection extends AppCompatActivity implements AdapterView.On
                     return FirebaseVisionImageMetadata.ROTATION_270;
                 default:
                     throw new IllegalArgumentException("각도는 0,90,180,270도 만 가능합니다.");
+
             }
         }
 
         @Override
+
         public void analyze(ImageProxy image, int rotationDegrees) {
             if (image == null || image.getImage() == null) {
                 return;
             }
-            Image image1 = image.getImage();
+            Image mediaImage = image.getImage();
             int rotation = degreesToFirebaseRotation(rotationDegrees);
-            FirebaseVisionImage image2 = FirebaseVisionImage.fromMediaImage(image1, rotation);
+
+
+            FirebaseVisionImage image3 = FirebaseVisionImage.fromMediaImage(mediaImage, rotation);
+
         }
     }
 
