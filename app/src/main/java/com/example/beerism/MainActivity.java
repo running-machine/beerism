@@ -1,11 +1,8 @@
 package com.example.beerism;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,9 +13,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,17 +35,17 @@ import com.ToxicBakery.viewpager.transforms.CubeOutTransformer;
 import com.example.beerism.Fragment.Cu_Fragment;
 import com.example.beerism.Fragment.GS_Fragment;
 import com.example.beerism.Fragment.SevenEleven_Fragment;
+import com.example.beerism.VO.ChoiceBeerVO;
 import com.gigamole.navigationtabstrip.NavigationTabStrip;
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.Target;
-import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.yarolegovich.lovelydialog.LovelyChoiceDialog;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     NavigationTabStrip main_nts;
@@ -57,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int FROM_CAMERA = 0;
     private static final int FROM_ALBUM = 1;
-    FloatingActionButton DetectionFab , ListFab;
+    FloatingActionButton DetectionFab, ListFab, recFab;
 
     private AlertDialog alert;
 
@@ -75,26 +71,27 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         auth = FirebaseAuth.getInstance();
 
-        // 앱 최초 실행 여부 //
-        SharedPreferences pref = getSharedPreferences("isFirst", Activity.MODE_PRIVATE);
+//        // 앱 최초 실행 여부 //
+//        SharedPreferences pref = getSharedPreferences("isFirst", Activity.MODE_PRIVATE);
+//
+//        // 타겟 지정
+//        Target target = new ViewTarget(R.id.main_vp, this);
+//
+//        boolean first = pref.getBoolean("isFirst", false);
+//
+//        if (!first) {
+//            SharedPreferences.Editor editor = pref.edit();
+//            editor.putBoolean("isFirst", true);
+//            editor.apply();
+//            new ShowcaseView.Builder(this)
+//                    .setTarget(target)
+//                    .setContentTitle("ShowcaseView")
+//                    .setContentText("This is highlighting the Home button")
+//                    .hideOnTouchOutside()
+//                    .build();
+//        }
 
-        // 타겟 지정
-        Target target = new ViewTarget(R.id.main_vp, this);
-
-        boolean first = pref.getBoolean("isFirst", false);
-
-        if (!first) {
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putBoolean("isFirst", true);
-            editor.apply();
-            new ShowcaseView.Builder(this)
-                    .setTarget(target)
-                    .setContentTitle("ShowcaseView")
-                    .setContentText("This is highlighting the Home button")
-                    .hideOnTouchOutside()
-                    .build();
-        }
-
+        recFab = findViewById(R.id.fab3);
         ListFab = findViewById(R.id.fab2);
         DetectionFab = findViewById(R.id.fab1);
         main_nts = findViewById(R.id.nts_top);
@@ -110,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         ListFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(),BeerList.class);
+                Intent intent = new Intent(getApplicationContext(), BeerList.class);
                 startActivity(intent);
             }
         });
@@ -122,6 +119,40 @@ public class MainActivity extends AppCompatActivity {
                 alert.show();
             }
         });
+
+
+//        String[] choiceItems = getResources().getStringArray(R.array)
+
+        final ArrayAdapter<ChoiceBeerVO> arrayAdapter = new choiceBeer(this, loadDonationOptions());
+        recFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new LovelyChoiceDialog(view.getContext())
+
+                        .setTitle("me")
+                        .setIcon(R.drawable.common_google_signin_btn_icon_disabled)
+                        .setMessage("me2")
+                        .setItems(arrayAdapter, new LovelyChoiceDialog.OnItemSelectedListener<ChoiceBeerVO>() {
+                            @Override
+                            public void onItemSelected(int position, ChoiceBeerVO item) {
+                                Toast.makeText(getApplicationContext(), getString(position), Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .show();
+
+            }
+        });
+
+    }
+
+    private List<ChoiceBeerVO> loadDonationOptions() {
+        List<ChoiceBeerVO> result = new ArrayList<>();
+        String[] raw = getResources().getStringArray(R.array.choiceStyle);
+        for (String op : raw) {
+//            String[] info = op.split("%");
+            result.add(new ChoiceBeerVO(raw[0], raw[1]));
+        }
+        return result;
     }
 
     @Override
@@ -164,8 +195,7 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId())
-                {
+                switch (menuItem.getItemId()) {
                     case R.id.menuitem1:
                         Toast.makeText(getApplicationContext(), "SelectedItem 1", Toast.LENGTH_SHORT).show();
                     case R.id.menuitem2:
@@ -180,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
 //    private void makeDialog() {
 //        AlertDialog.Builder alt_bld = new AlertDialog.Builder(MainActivity.this, R.style.Alert);
@@ -277,6 +308,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 임시적으로 생긴 파일의 경로를 mCurrentPhotoPath에 넣고 반환하는 메소드
+     *
      * @return
      * @throws IOException
      */
@@ -318,47 +350,7 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "사진이 저장되었습니다", Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != RESULT_OK) {
-            return;
-        }
 
-        switch (requestCode) {
-            case FROM_ALBUM: {
-                if (data.getData() != null) {
-                    try {
-                        File albumFile = createImageFile();
-
-                        photoURI = data.getData();
-                        albumURI = Uri.fromFile(albumFile);
-                        galleryAddPic();
-                        //cropImage();
-
-                        Intent intent = new Intent(getApplicationContext(), ObjectDetection.class);
-                        intent.putExtra("imageUri", photoURI);
-                        startActivity(intent);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.v("알림", "앨범에서 가져오기 에러");
-                    }
-                }
-                break;
-            }
-            case FROM_CAMERA: {
-                try {
-                    galleryAddPic();
-
-                    // 카메라 촬영 후 이미지가 제대로 나오도록 회전 후
-                    // 해당 Uri(변수 imgUri)를 ObjectDetection의 intent로 전달
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-            }
-        }
-    }
 
     public static class MyPagerAdapter extends FragmentPagerAdapter {
         private static int NUM_ITEMS = 3;

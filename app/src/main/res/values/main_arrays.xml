@@ -13,4 +13,20 @@
         <item>님! 시원한 맥주로 스트레스를 날려버려요!</item>
     </string-array>
 
+    <string-array name="choiceStyle">
+        <item>Larger(라거)</item>
+        <item>Ale(에일)</item>
+
+
+    </string-array>
+
+    <string-array name="choiceCountry">
+        <item>국내 맥주</item>
+        <item>외국 맥주</item>
+        <item>아무거나 상관없다.</item>
+
+    </string-array>
+    
+
+
 </resources>
