@@ -50,7 +50,7 @@ public class Splash extends AppCompatActivity {
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            startActivity(new Intent(getApplication(), Login.class));
+                            startActivity(new Intent(getApplication(), MainActivity.class));
                             Splash.this.finish();
                         }
                     }, duration - 9000);

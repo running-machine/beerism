@@ -24,7 +24,7 @@ public class SevenEleven_Fragment  extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.seven_eleven_page, container, false);
         PhotoView photoView = view.findViewById(R.id.seven_discount);
-        photoView.setImageResource(R.drawable.dum_sale);
+        photoView.setImageResource(R.drawable.seven);
         return view;
     }
 }

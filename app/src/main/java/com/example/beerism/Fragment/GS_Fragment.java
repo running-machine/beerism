@@ -44,7 +44,7 @@ public class GS_Fragment  extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.gs_page, container, false);
         PhotoView photoView = view.findViewById(R.id.gs_discount);
-        photoView.setImageResource(R.drawable.dum_sale);
+        photoView.setImageResource(R.drawable.gs25);
         return view;
     }
 }

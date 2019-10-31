@@ -116,7 +116,8 @@ public class MainActivity extends AppCompatActivity {
         DetectionFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                alert.show();
+                Intent intent = new Intent(getApplicationContext(),DetectorActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -129,13 +130,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 new LovelyChoiceDialog(view.getContext())
 
-                        .setTitle("me")
+                        .setTitle("")
                         .setIcon(R.drawable.common_google_signin_btn_icon_disabled)
                         .setMessage("me2")
                         .setItems(arrayAdapter, new LovelyChoiceDialog.OnItemSelectedListener<ChoiceBeerVO>() {
                             @Override
                             public void onItemSelected(int position, ChoiceBeerVO item) {
-                                Toast.makeText(getApplicationContext(), getString(position), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), item.toString(), Toast.LENGTH_SHORT).show();
                             }
                         })
                         .show();

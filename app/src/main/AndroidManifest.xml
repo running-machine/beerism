@@ -19,13 +19,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".search"></activity>
-        <activity android:name=".Login.Login"></activity>
-        <activity android:name=".Login.SignUpActivity"></activity>
-
+        <activity android:name=".search" />
+        <activity android:name=".Login.Login" />
+        <activity android:name=".Login.SignUpActivity" />
+        <activity android:name=".DetectorActivity"></activity>
         <activity android:name=".Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="label" />
@@ -45,11 +50,7 @@
         </provider>
 
         <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 
