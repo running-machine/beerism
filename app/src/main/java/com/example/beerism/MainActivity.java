@@ -9,12 +9,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -112,12 +110,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        initDialog(); // DetectionFab에 click 메소드를 할당하기 전에 dialog 초기화
+//        initDialog(); // DetectionFab에 click 메소드를 할당하기 전에 dialog 초기화
         DetectionFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(),DetectorActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -238,37 +237,37 @@ public class MainActivity extends AppCompatActivity {
 //        alert.show();
 //    }
 
-    private void initDialog() {
-        AlertDialog.Builder alt_bld = new AlertDialog.Builder(MainActivity.this);
-        LayoutInflater inflater = getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_detection, null);
-
-        final Button take_ph = (Button) view.findViewById(R.id.take_photo_bt);
-        final Button choice = (Button) view.findViewById(R.id.choice_bt);
-        final Button close = (Button) view.findViewById(R.id.cancel_bt);
-
-        alt_bld.setView(view);
-        alert = alt_bld.create();
-
-        take_ph.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                takePhoto();
-            }
-        });
-        choice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectAlbum();
-            }
-        });
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alert.cancel();
-            }
-        });
-    }
+//    private void initDialog() {
+//        AlertDialog.Builder alt_bld = new AlertDialog.Builder(MainActivity.this);
+//        LayoutInflater inflater = getLayoutInflater();
+//        View view = inflater.inflate(R.layout.dialog_detection, null);
+//
+//        final Button take_ph = (Button) view.findViewById(R.id.take_photo_bt);
+//        final Button choice = (Button) view.findViewById(R.id.choice_bt);
+//        final Button close = (Button) view.findViewById(R.id.cancel_bt);
+//
+//        alt_bld.setView(view);
+//        alert = alt_bld.create();
+//
+//        take_ph.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                takePhoto();
+//            }
+//        });
+//        choice.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                selectAlbum();
+//            }
+//        });
+//        close.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                alert.cancel();
+//            }
+//        });
+//    }
 
     /**
      * 사진 촬영 후 해당 파일을 임시적으로 저장하는 메소드
