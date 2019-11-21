@@ -6,6 +6,8 @@
     <string name="navigation_drawer_open">Drawer Open</string>
 
     <string name="navigation_drawer_close">Drawer Closed</string>
+    <string name="survey_title">추천 맥주!</string>
+    <string name="survey_message">맘에드는 맥주를 터치해주세요!</string>
 
     <string name="description_info">Info</string>
     <string name="request_permission">This sample needs camera permission.</string>

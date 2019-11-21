@@ -2,6 +2,7 @@ package com.example.beerism;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -34,11 +35,13 @@ import com.example.beerism.Fragment.Cu_Fragment;
 import com.example.beerism.Fragment.GS_Fragment;
 import com.example.beerism.Fragment.SevenEleven_Fragment;
 import com.example.beerism.VO.ChoiceBeerVO;
+import com.example.beerism.VO.SurveyOption;
 import com.gigamole.navigationtabstrip.NavigationTabStrip;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.yarolegovich.lovelydialog.LovelyChoiceDialog;
+import com.yarolegovich.lovelydialog.LovelySaveStateHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +51,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     NavigationTabStrip main_nts;
     ViewPager main_vp;
-
+    private static final int ID_SINGLE_CHOICE_DIALOG = R.id.fab3;
+    private LovelySaveStateHandler saveStateHandler;
     private static final int FROM_CAMERA = 0;
     private static final int FROM_ALBUM = 1;
     FloatingActionButton DetectionFab, ListFab, recFab;
@@ -68,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
         auth = FirebaseAuth.getInstance();
+        saveStateHandler = new LovelySaveStateHandler();
 
 //        // 앱 최초 실행 여부 //
 //        SharedPreferences pref = getSharedPreferences("isFirst", Activity.MODE_PRIVATE);
@@ -127,23 +132,103 @@ public class MainActivity extends AppCompatActivity {
         recFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new LovelyChoiceDialog(view.getContext())
-
-                        .setTitle("")
-                        .setIcon(R.drawable.common_google_signin_btn_icon_disabled)
-                        .setMessage("me2")
-                        .setItems(arrayAdapter, new LovelyChoiceDialog.OnItemSelectedListener<ChoiceBeerVO>() {
-                            @Override
-                            public void onItemSelected(int position, ChoiceBeerVO item) {
-                                Toast.makeText(getApplicationContext(), item.toString(), Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .show();
-
+                String[] beer = {"cass", "hite", "filite"};
+                String[] beer_list = {"cass", "hite", "filite", "blanc", "cloud"};
+                survey_dialog(beer, beer_list);
             }
         });
 
     }
+    void survey_dialog(String[] beer, String[] beer_list)
+    {
+        final List<String> ListItems = new ArrayList<>();
+        for(String item : beer){
+            ListItems.add(item);
+        }
+        final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("AlertDialog Title");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                score_dialog();
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.setPositiveButton("다른맥주", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                other_beer(beer_list);
+            }
+        });
+        builder.show();
+    }
+    private void other_beer(String[] beer_list){
+        final List<String> ListItems = new ArrayList<>();
+        for(String item : beer_list){
+            ListItems.add(item);
+        }
+        final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("AlertDialog Title");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                score_dialog();
+        }
+    });
+        builder.show();
+    }
+    private void score_dialog(){
+        final List<String> ListItems = new ArrayList<>();
+        ListItems.add("1점");
+        ListItems.add("2점");
+        ListItems.add("3점");
+        ListItems.add("4점");
+        ListItems.add("5점");
+        final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
+        final List SelectedItems  = new ArrayList();
+        int defaultItem = 0;
+        SelectedItems.add(defaultItem);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("맥주 평점");
+        builder.setSingleChoiceItems(items, defaultItem,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SelectedItems.clear();
+                        SelectedItems.add(which);
+                    }
+                });
+        builder.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        String msg="";
+
+                        if (!SelectedItems.isEmpty()) {
+                            int index = (int) SelectedItems.get(0);
+                            msg = ListItems.get(index);
+                        }
+                        Toast.makeText(getApplicationContext(),
+                                "Items Selected.\n"+ msg , Toast.LENGTH_LONG)
+                                .show();
+                    }
+                });
+        builder.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        builder.show();
+    }
+
 
     private List<ChoiceBeerVO> loadDonationOptions() {
         List<ChoiceBeerVO> result = new ArrayList<>();

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="16dp"
+    android:paddingTop="16dp">
+
+    <TextView
+        android:id="@+id/beer"
+        android:layout_width="wrap_content"
+        android:textSize="16sp"
+        android:textColor="#212121"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/ld_side_margin"
+        android:layout_marginRight="@dimen/ld_side_margin" />
+
+</LinearLayout>
