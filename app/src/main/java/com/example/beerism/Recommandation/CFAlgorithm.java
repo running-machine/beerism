@@ -4,18 +4,33 @@ import android.util.Log;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 // 참고 url : https://kutar37.tistory.com/39
 
 public class CFAlgorithm {
     String TAG = "ObjectDetection";
-    Map<String, Map<String, Double>> critics;
+    private Map<String, Map<String, Double>> critics;
+
+    private static CFAlgorithm instance = new CFAlgorithm();
+
+    public static CFAlgorithm getInstance() {
+        return instance;
+    }
+
+    private CFAlgorithm() {
+        critics = new HashMap<>();
+    }
+
+    public void inputData(String name, Map<String, Double>  movieInfo) {
+        critics.put(name, movieInfo);
+    }
+
+    public void initData() {
+        critics.clear();
+    }
 
     public void inputData() {
         critics = new HashMap<>();
@@ -172,20 +187,29 @@ public class CFAlgorithm {
         return recommandationLst;
     }
 
-    public void main() {
-        inputData();
-
-        List<Map.Entry<String, Double>> ranks = topMatch("박병관");
-
-        Log.d(TAG, "유사도");
-        for (Map.Entry<String, Double> item : ranks) {
-//            Log.d(TAG, item.getKey() + "'s score = " + item.getValue());
+    public List<Map.Entry<String, Double>> getUserData(String name) {
+        List<Map.Entry<String, Double>> data = new ArrayList<>();
+        for (String key : critics.get(name).keySet()) {
+            data.add(new AbstractMap.SimpleEntry<>(key, critics.get(name).get(key)));
         }
 
-        Log.d(TAG, "예상 평점");
-        List<Map.Entry<String, Double>> scores = getRecommandation("박병관");
-        for (Map.Entry<String, Double> item : scores) {
-            Log.d(TAG, item.getKey() + "'s score = " + item.getValue());
-        }
+        return data;
     }
+
+//    public void main() {
+//        inputData();
+//
+//        List<Map.Entry<String, Double>> ranks = topMatch("박병관");
+//
+//        Log.d(TAG, "유사도");
+//        for (Map.Entry<String, Double> item : ranks) {
+////            Log.d(TAG, item.getKey() + "'s score = " + item.getValue());
+//        }
+//
+//        Log.d(TAG, "예상 평점");
+//        List<Map.Entry<String, Double>> scores = getRecommandation("박병관");
+//        for (Map.Entry<String, Double> item : scores) {
+//            Log.d(TAG, item.getKey() + "'s score = " + item.getValue());
+//        }
+//    }
 }
