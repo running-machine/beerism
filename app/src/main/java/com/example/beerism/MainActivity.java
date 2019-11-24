@@ -34,21 +34,26 @@ import com.ToxicBakery.viewpager.transforms.CubeOutTransformer;
 import com.example.beerism.Fragment.Cu_Fragment;
 import com.example.beerism.Fragment.GS_Fragment;
 import com.example.beerism.Fragment.SevenEleven_Fragment;
+import com.example.beerism.Login.Constants;
+import com.example.beerism.Recommandation.CFAlgorithm;
 import com.example.beerism.VO.ChoiceBeerVO;
-import com.example.beerism.VO.SurveyOption;
 import com.gigamole.navigationtabstrip.NavigationTabStrip;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.yarolegovich.lovelydialog.LovelyChoiceDialog;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.yarolegovich.lovelydialog.LovelySaveStateHandler;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+    private String TAG = "ObjectDetection";
     NavigationTabStrip main_nts;
     ViewPager main_vp;
     private static final int ID_SINGLE_CHOICE_DIALOG = R.id.fab3;
@@ -56,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int FROM_CAMERA = 0;
     private static final int FROM_ALBUM = 1;
     FloatingActionButton DetectionFab, ListFab, recFab;
+    private FirebaseFirestore firebaseFirestore;
 
     private AlertDialog alert;
 
@@ -65,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
     private String mCurrentPhotoPath;
     FirebaseAuth auth;
 
+    String loginEmail = "fjdjs@naver.com";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         auth = FirebaseAuth.getInstance();
         saveStateHandler = new LovelySaveStateHandler();
+
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
 //        // 앱 최초 실행 여부 //
 //        SharedPreferences pref = getSharedPreferences("isFirst", Activity.MODE_PRIVATE);
@@ -132,9 +142,62 @@ public class MainActivity extends AppCompatActivity {
         recFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String[] beer = {"cass", "hite", "filite"};
-                String[] beer_list = {"cass", "hite", "filite", "blanc", "cloud"};
-                survey_dialog(beer, beer_list);
+                firebaseFirestore.collection(Constants.SCORE_COLLECTION)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        //데이터를 가져오는 작업이 잘 작동했을 경우
+                        if (task.isSuccessful()) {
+                            CFAlgorithm recoObj = CFAlgorithm.getInstance();
+                            recoObj.initData();
+                            Map<String, Double> movieInfo = new HashMap<>();
+                            List<Map.Entry<String, Double>> rank = new ArrayList<>();
+                            // 기존 데이터를 가져옴
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Map<String, Object> tempMovies = document.getData();
+//                                Log.d(TAG, document.getId());
+                                for (String key : tempMovies.keySet()) {
+                                    movieInfo.put(key, Double.parseDouble(tempMovies.get(key).toString()));
+//                                    Log.d(TAG, "\t" + key + "의 점수는 " + tempMovies.get(key).toString() + "점");
+                                }
+
+                                recoObj.inputData(document.getId(), movieInfo);
+                            }
+
+                            // 기존 사용자들에 따라 예상 평점을 추출
+                            for (Map.Entry<String, Double> item : CFAlgorithm.getInstance().getRecommandation(loginEmail)) {
+                                rank.add(item);
+                            }
+
+                            for (Map.Entry<String, Double> item : CFAlgorithm.getInstance().getUserData(loginEmail)) {
+                                rank.add(item);
+                            }
+
+                            rank.sort((o1, o2) -> {
+                                if (o1.getValue() == o2.getValue()) return 0;
+                                else if (o1.getValue() > o2.getValue()) return -1;
+                                else return 1;
+                            });
+
+//                            Log.d(TAG, loginEmail + "의 개인 점수");
+//                            for (Map.Entry<String, Double> item : rank) {
+//                                Log.d(TAG, item.getKey() + "의 점수는 " + item.getValue() + "점");
+//                            }
+                            String[] beer;
+                            String[] beer_list = {"hoegaarden", "kloud", "filite", "filgood", "filiteweizen",
+                                    "jejuale", "tsingtao", "casslight", "filitefresh", "terra",
+                                    "hite", "cass", "heineken", "budweiser", "fitz" };
+
+                            int size = rank.size() >= 3 ? 3 : rank.size();
+                            beer = new String[size];
+                            for (int i = 0; i < size ; i++) {
+                                beer[i] = rank.get(i).getKey() + " : " + rank.get(i).getValue();
+                            }
+
+                            survey_dialog(beer, beer_list);
+                        } else {
+                            task.getException();
+                        }
+                    });
             }
         });
 
@@ -151,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                score_dialog();
+                score_dialog(items[which].toString());
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -180,12 +243,13 @@ public class MainActivity extends AppCompatActivity {
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                score_dialog();
+                score_dialog(items[which].toString());
         }
     });
         builder.show();
     }
-    private void score_dialog(){
+    private void score_dialog(String beerName){
+//        Log.d(TAG, "선택된 아이템 : " + beerName);
         final List<String> ListItems = new ArrayList<>();
         ListItems.add("1점");
         ListItems.add("2점");
@@ -197,6 +261,7 @@ public class MainActivity extends AppCompatActivity {
         int defaultItem = 0;
         SelectedItems.add(defaultItem);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder overlapBuilder = new AlertDialog.Builder(this);
         builder.setTitle("맥주 평점");
         builder.setSingleChoiceItems(items, defaultItem,
                 new DialogInterface.OnClickListener() {
@@ -213,8 +278,13 @@ public class MainActivity extends AppCompatActivity {
 
                         if (!SelectedItems.isEmpty()) {
                             int index = (int) SelectedItems.get(0);
+                            String seledteditem = ListItems.get(index);
+                            seledteditem = seledteditem.substring(0, seledteditem.length() - 1);
+
+                            firebaseFirestore.collection(Constants.SCORE_COLLECTION).document(loginEmail).update(beerName, Double.parseDouble(seledteditem));
                             msg = ListItems.get(index);
                         }
+
                         Toast.makeText(getApplicationContext(),
                                 "Items Selected.\n"+ msg , Toast.LENGTH_LONG)
                                 .show();
