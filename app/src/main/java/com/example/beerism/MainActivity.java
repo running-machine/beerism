@@ -2,6 +2,7 @@ package com.example.beerism;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,13 +11,17 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -31,6 +36,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.ToxicBakery.viewpager.transforms.CubeOutTransformer;
+import com.bumptech.glide.Glide;
 import com.example.beerism.Fragment.Cu_Fragment;
 import com.example.beerism.Fragment.GS_Fragment;
 import com.example.beerism.Fragment.SevenEleven_Fragment;
@@ -41,12 +47,16 @@ import com.gigamole.navigationtabstrip.NavigationTabStrip;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.yarolegovich.lovelydialog.LovelySaveStateHandler;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -137,84 +147,101 @@ public class MainActivity extends AppCompatActivity {
 
 
 //        String[] choiceItems = getResources().getStringArray(R.array)
-
+        final Context context = this;
         final ArrayAdapter<ChoiceBeerVO> arrayAdapter = new choiceBeer(this, loadDonationOptions());
         recFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 firebaseFirestore.collection(Constants.SCORE_COLLECTION)
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        //데이터를 가져오는 작업이 잘 작동했을 경우
-                        if (task.isSuccessful()) {
+                        .addSnapshotListener((snapshot, e) -> {
+                            if (e != null) {
+                                Log.w(TAG, "Listen failed.", e);
+                                return;
+                            }
+                            String source = snapshot != null && snapshot.getMetadata().hasPendingWrites()
+                                    ? "Local" : "Server";
+
                             CFAlgorithm recoObj = CFAlgorithm.getInstance();
                             recoObj.initData();
-                            Map<String, Double> movieInfo = new HashMap<>();
+
                             List<Map.Entry<String, Double>> rank = new ArrayList<>();
-                            // 기존 데이터를 가져옴
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Map<String, Object> tempMovies = document.getData();
-//                                Log.d(TAG, document.getId());
-                                for (String key : tempMovies.keySet()) {
-                                    movieInfo.put(key, Double.parseDouble(tempMovies.get(key).toString()));
-//                                    Log.d(TAG, "\t" + key + "의 점수는 " + tempMovies.get(key).toString() + "점");
+                            List<DocumentSnapshot> documents = snapshot.getDocuments();
+                            if (documents != null) {
+                                // 기존 데이터를 가지고 옴
+                                for (DocumentSnapshot document : documents) {
+                                    Map<String, Object> tempMovies = document.getData();
+                                    Map<String, Double> movieInfo = new HashMap<>();
+//                                    Log.d(TAG, document.getId());
+                                    for (String key : tempMovies.keySet()) {
+                                        movieInfo.put(key, Double.parseDouble(tempMovies.get(key).toString()));
+//                                        Log.d(TAG, "\t" + key + "의 점수는 " + movieInfo.get(key) + "점");
+
+                                        if (loginEmail.equals(document.getId())) {
+                                            rank.add(new AbstractMap.SimpleEntry<>(key, movieInfo.get(key)));
+                                        }
+                                    }
+
+                                    recoObj.inputData(document.getId(), movieInfo);
                                 }
 
-                                recoObj.inputData(document.getId(), movieInfo);
+                                Map<String, Double> temp = new HashMap<>();
+                                for (Map.Entry<String, Double> data : rank) {
+                                    temp.put(data.getKey(), data.getValue());
+                                }
+                                recoObj.inputData(loginEmail, temp);
+
+                                // 기존 사용자들에 따라 예상 평점을 추출
+                                List<Map.Entry<String, Double>> recoLst = recoObj.getRecommandation(loginEmail);
+                                for (Map.Entry<String, Double> item : recoLst) {
+                                    rank.add(item);
+                                }
+
+                                rank.sort((o1, o2) -> {
+                                    if (o1.getValue() == o2.getValue()) return 0;
+                                    else if (o1.getValue() > o2.getValue()) return -1;
+                                    else return 1;
+                                });
+
+//                                Log.d(TAG, loginEmail + "의 개인 점수");
+//                                for (Map.Entry<String, Double> item : rank) {
+//                                    Log.d(TAG, "\t" + item.getKey() + "의 점수는 " + item.getValue() + "점");
+//                                }
+                                Map.Entry<String, Double>[] beer;
+                                String[] beer_list = {"hoegaarden", "kloud", "filite", "filgood", "filiteweizen",
+                                        "jejuale", "tsingtao", "casslight", "filitefresh", "terra",
+                                        "hite", "cass", "heineken", "budweiser", "fitz" };
+
+                                int size = rank.size() >= 3 ? 3 : rank.size();
+
+                                beer = new Map.Entry[size];
+                                for (int i = 0; i < size ; i++) {
+                                    beer[i] = rank.get(i);
+                                }
+
+                                survey_dialog(beer, beer_list);
                             }
-
-                            // 기존 사용자들에 따라 예상 평점을 추출
-                            for (Map.Entry<String, Double> item : CFAlgorithm.getInstance().getRecommandation(loginEmail)) {
-                                rank.add(item);
+                            else {
+                                Toast.makeText(context, "데이터 베이스 이상", Toast.LENGTH_SHORT);
                             }
-
-                            for (Map.Entry<String, Double> item : CFAlgorithm.getInstance().getUserData(loginEmail)) {
-                                rank.add(item);
-                            }
-
-                            rank.sort((o1, o2) -> {
-                                if (o1.getValue() == o2.getValue()) return 0;
-                                else if (o1.getValue() > o2.getValue()) return -1;
-                                else return 1;
-                            });
-
-//                            Log.d(TAG, loginEmail + "의 개인 점수");
-//                            for (Map.Entry<String, Double> item : rank) {
-//                                Log.d(TAG, item.getKey() + "의 점수는 " + item.getValue() + "점");
-//                            }
-                            String[] beer;
-                            String[] beer_list = {"hoegaarden", "kloud", "filite", "filgood", "filiteweizen",
-                                    "jejuale", "tsingtao", "casslight", "filitefresh", "terra",
-                                    "hite", "cass", "heineken", "budweiser", "fitz" };
-
-                            int size = rank.size() >= 3 ? 3 : rank.size();
-                            beer = new String[size];
-                            for (int i = 0; i < size ; i++) {
-                                beer[i] = rank.get(i).getKey();
-                            }
-
-                            survey_dialog(beer, beer_list);
-                        } else {
-                            task.getException();
-                        }
-                    });
+                        });
             }
         });
-
     }
-    void survey_dialog(String[] beer, String[] beer_list)
+    void survey_dialog(Map.Entry<String, Double>[] beer, String[] beer_list)
     {
         final List<String> ListItems = new ArrayList<>();
-        for(String item : beer){
-            ListItems.add(item);
+        for(Map.Entry<String, Double> item : beer){
+            ListItems.add(item.getKey());
         }
-        final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
+        final CharSequence[] items =  ListItems.toArray(new String[ListItems.size()]);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("AlertDialog Title");
+        builder.setTitle("추천 맥주");
+
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                score_dialog(items[which].toString());
+//                score_dialog(items[which].toString());
+                beer_dialog(beer[which].getKey(), beer[which].getValue());
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -231,15 +258,17 @@ public class MainActivity extends AppCompatActivity {
         });
         builder.show();
     }
+
     private void other_beer(String[] beer_list){
         final List<String> ListItems = new ArrayList<>();
-        for(String item : beer_list){
+        for (String item : beer_list){
             ListItems.add(item);
         }
-        final CharSequence[] items =  ListItems.toArray(new String[ ListItems.size()]);
+
+        final CharSequence[] items =  ListItems.toArray(new String[ListItems.size()]);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("AlertDialog Title");
+        builder.setTitle("맥주 평점 매기기");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -248,6 +277,55 @@ public class MainActivity extends AppCompatActivity {
     });
         builder.show();
     }
+
+    private void beer_dialog(String beerName, double score) {
+        final Context context = this;
+        firebaseFirestore.collection("beer").document(beerName)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // 기존 데이터를 가져옴
+                        Map<String, Object> tempData = task.getResult().getData();
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                        LayoutInflater factory = LayoutInflater.from(context);
+                        View view = factory.inflate(R.layout.dialog_simple_beer, null);
+
+                        try {
+                            ImageView image = view.findViewById(R.id.beer_image);
+
+                            // 평점은 score
+                            TextView name_txt = view.findViewById(R.id.name_txt);
+                            TextView alc_txt = view.findViewById(R.id.alc_txt);
+                            TextView category_txt = view.findViewById(R.id.category_txt);
+
+                            name_txt.setText("이름 : " + beerName);
+                            alc_txt.setText("도수 : " + tempData.get("alc").toString() + "℃");
+                            category_txt.setText("카테고리 : " + tempData.get("category").toString());
+
+                            builder.setView(view);
+                            builder.setPositiveButton("확인", (dialog, which) -> {
+
+                            });
+                            Glide.with(context)
+                                    .load(tempData.get("img").toString())
+                                    .into(image);
+
+                            if (!this.isFinishing()) {
+                                builder.show();
+                            }
+                            // tempData.get("img").toString()
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else {
+                        task.getException();
+                    }
+                });
+    }
+
     private void score_dialog(String beerName){
 //        Log.d(TAG, "선택된 아이템 : " + beerName);
         final List<String> ListItems = new ArrayList<>();
@@ -261,7 +339,6 @@ public class MainActivity extends AppCompatActivity {
         int defaultItem = 0;
         SelectedItems.add(defaultItem);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        AlertDialog.Builder overlapBuilder = new AlertDialog.Builder(this);
         builder.setTitle("맥주 평점");
         builder.setSingleChoiceItems(items, defaultItem,
                 new DialogInterface.OnClickListener() {
@@ -282,12 +359,25 @@ public class MainActivity extends AppCompatActivity {
                             seledteditem = seledteditem.substring(0, seledteditem.length() - 1);
 
                             firebaseFirestore.collection(Constants.SCORE_COLLECTION).document(loginEmail).update(beerName, Double.parseDouble(seledteditem));
-                            msg = ListItems.get(index);
-                        }
+                            firebaseFirestore.collection(Constants.SCORE_COLLECTION).document(loginEmail)
+                                    .addSnapshotListener((snapshot, e) -> {
+                                        if (e != null) {
+                                            Log.w(TAG, "Listen failed.", e);
+                                            return;
+                                        }
 
-//                        Toast.makeText(getApplicationContext(),
-//                                "Items Selected.\n"+ msg , Toast.LENGTH_LONG)
-//                                .show();
+                                        String source = snapshot != null && snapshot.getMetadata().hasPendingWrites()
+                                                ? "Local" : "Server";
+
+                                        if (snapshot != null && snapshot.exists()) {
+                                            Log.d(TAG, source + " data: " + snapshot.getData());
+                                        } else {
+                                            Log.d(TAG, source + " data: null");
+                                        }
+                                    });
+                            msg = ListItems.get(index);
+                            Toast.makeText(getApplicationContext(), msg + " 평점 매기기 완료" , Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
         builder.setNegativeButton("Cancel",

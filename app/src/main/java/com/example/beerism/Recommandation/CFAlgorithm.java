@@ -27,78 +27,9 @@ public class CFAlgorithm {
     public void inputData(String name, Map<String, Double>  movieInfo) {
         critics.put(name, movieInfo);
     }
-
+    public Map<String, Map<String, Double>> getData() {return critics;}
     public void initData() {
         critics.clear();
-    }
-
-    public void inputData() {
-        critics = new HashMap<>();
-
-        Map<String, Double> items = new HashMap<>();
-        items.put("택시운전사", 2.5);
-        items.put("남한산성", 3.5);
-        items.put("킹스맨:골든서클", 3.0);
-        items.put("범죄도시", 3.5);
-        items.put("아이 캔 스피크", 2.5);
-        items.put("The Night Listener", 3.0);
-        critics.put("차현석", items);
-
-        items = new HashMap<>();
-        items.put("택시운전사", 1.0);
-        items.put("남한산성", 4.5);
-        items.put("킹스맨:골든서클", 0.5);
-        items.put("범죄도시", 1.5);
-        items.put("아이 캔 스피크", 4.5);
-        items.put("The Night Listener", 5.0);
-        critics.put("황해도", items);
-
-        items = new HashMap<>();
-        items.put("택시운전사", 3.0);
-        items.put("남한산성", 3.5);
-        items.put("킹스맨:골든서클", 1.5);
-        items.put("범죄도시", 5.0);
-        items.put("아이 캔 스피크", 3.5);
-        items.put("The Night Listener", 3.0);
-        critics.put("김미희", items);
-
-        items = new HashMap<>();
-        items.put("택시운전사", 2.5);
-        items.put("남한산성", 3.0);
-        items.put("범죄도시", 3.5);
-        items.put("The Night Listener", 4.0);
-        critics.put("김준형", items);
-
-        items = new HashMap<>();
-        items.put("남한산성", 3.5);
-        items.put("킹스맨:골든서클", 3.0);
-        items.put("범죄도시", 4.0);
-        items.put("아이 캔 스피크", 2.5);
-        items.put("The Night Listener", 4.5);
-        critics.put("이은비", items);
-
-        items = new HashMap<>();
-        items.put("택시운전사", 3.0);
-        items.put("남한산성", 4.0);
-        items.put("킹스맨:골든서클", 2.0);
-        items.put("범죄도시", 3.0);
-        items.put("아이 캔 스피크", 2.0);
-        items.put("The Night Listener", 3.5);
-        critics.put("임명진", items);
-
-        items = new HashMap<>();
-        items.put("택시운전사", 3.0);
-        items.put("남한산성", 4.0);
-        items.put("범죄도시", 5.0);
-        items.put("아이 캔 스피크", 3.5);
-        items.put("The Night Listener", 3.0);
-        critics.put("심수정", items);
-
-        items = new HashMap<>();
-        items.put("남한산성", 4.5);
-        items.put("범죄도시", 4.0);
-        items.put("아이 캔 스피크", 1.0);
-        critics.put("박병관", items);
     }
 
     public double calculatePearsonNum(String name1, String name2) {
@@ -149,22 +80,13 @@ public class CFAlgorithm {
 
         for (Map.Entry<String, Double> sim: answer) {
             if (sim.getValue() < 0) continue;
+
             for (String beerName : critics.get(sim.getKey()).keySet()) {
                 if (!critics.get(name).containsKey(beerName)) {
                     score += sim.getValue() * critics.get(sim.getKey()).get(beerName);
-                    if (!simMap.containsKey(beerName)) {
-                        scoreMap.put(beerName, 0.0);
-                    }
-                    else {
-                        scoreMap.put(beerName, scoreMap.get(beerName) + score);
-                    }
 
-                    if (!simMap.containsKey(beerName)) {
-                        simMap.put(beerName, 0.0);
-                    }
-                    else {
-                        simMap.put(beerName, simMap.get(beerName) + sim.getValue());
-                    }
+                    scoreMap.put(beerName, scoreMap.containsKey(beerName) ? scoreMap.get(beerName) + score : score);
+                    simMap.put(beerName, simMap.containsKey(beerName) ? simMap.get(beerName) + sim.getValue() : sim.getValue());
                 }
 
                 score = 0;
@@ -185,15 +107,6 @@ public class CFAlgorithm {
         });
 
         return recommandationLst;
-    }
-
-    public List<Map.Entry<String, Double>> getUserData(String name) {
-        List<Map.Entry<String, Double>> data = new ArrayList<>();
-        for (String key : critics.get(name).keySet()) {
-            data.add(new AbstractMap.SimpleEntry<>(key, critics.get(name).get(key)));
-        }
-
-        return data;
     }
 
 //    public void main() {
